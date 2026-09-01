@@ -1,0 +1,87 @@
+// 연차 관리 시스템 - Prisma schema
+// docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  MASTER
+  TEAM_LEAD
+  USER
+}
+
+enum UserStatus {
+  PENDING // 가입 후 마스터 승인 대기
+  ACTIVE // 로그인 가능
+  DISABLED // 비활성화
+}
+
+enum LeaveType {
+  ANNUAL // 연차 (1일)
+  HALF_AM // 오전 반차 (0.5일)
+  HALF_PM // 오후 반차 (0.5일)
+  SICK // 병가 (연차 차감 없음)
+}
+
+enum LeaveStatus {
+  PENDING // 팀장 승인 대기
+  APPROVED // 승인 - 연차 반영
+  REJECTED // 반려 - 반영 안 됨
+  CANCELLED // 취소 - 반영 안 됨
+}
+
+model User {
+  id           String     @id @default(cuid())
+  loginId      String     @unique
+  passwordHash String
+  name         String
+  role         Role       @default(USER)
+  status       UserStatus @default(PENDING)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  balances      LeaveBalance[]
+  leaveRequests LeaveRequest[] @relation("requester")
+  decisions     LeaveRequest[] @relation("decider")
+}
+
+model LeaveBalance {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  year        Int
+  grantedDays Float    @default(0) // 가용연차 (부여된 연차)
+  adjustDays  Float    @default(0) // 마스터 수동 조정 (+ 사용 가산 / - 사용 차감)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, year])
+}
+
+model LeaveRequest {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation("requester", fields: [userId], references: [id], onDelete: Cascade)
+  type         LeaveType
+  startDate    DateTime    @db.Date
+  endDate      DateTime    @db.Date
+  days         Float // 계산된 일수 (연차: 영업일수, 반차: 0.5, 병가: 영업일수·차감 없음)
+  reason       String?
+  status       LeaveStatus @default(PENDING)
+  decidedById  String?
+  decidedBy    User?       @relation("decider", fields: [decidedById], references: [id], onDelete: SetNull)
+  decidedAt    DateTime?
+  decisionNote String? // 반려/취소 사유
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([startDate])
+}
