@@ -42,7 +42,7 @@ npm install
 
 ### 1-2. 데이터베이스 준비 (Neon)
 
-1. <https://neon.tech> 가입 후 프로젝트 생성 (Region은 가까운 곳, 예: `AWS ap-northeast-2 Seoul`).
+1. <https://neon.tech> 가입 후 프로젝트 생성 — Region은 `AWS ap-southeast-1 (Singapore)` (한국에서 가장 가까움, 왕복 약 70~90ms).
 2. 대시보드 **Connection Details** 에서 두 가지 연결 문자열을 복사합니다.
    - **Pooled connection** → `DATABASE_URL`
    - **Direct connection** → `DIRECT_URL`
@@ -109,6 +109,7 @@ git push -u origin main
 
 1. <https://vercel.com/new> → GitHub 저장소 **Import**.
 2. Framework Preset은 자동으로 **Next.js**. Build/Output 설정은 기본값 그대로.
+   - Function Region은 `vercel.json` 에서 `sin1` (Singapore) 로 고정해 두었습니다 — DB와 같은 리전이라야 요청당 왕복이 짧습니다.
 3. **Environment Variables** 에 아래 3개를 등록 (Production + Preview):
 
    | Key | Value |
