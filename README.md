@@ -91,7 +91,9 @@ npm run dev
 ### 그 외 명령
 
 ```bash
-npm test            # 단위 테스트 (연차 계산 로직)
+npm run lint        # ESLint
+npm run typecheck   # tsc --noEmit
+npm test            # 단위 테스트 (Vitest — 순수 로직)
 npm run db:studio   # Prisma Studio (DB GUI)
 npm run db:reset    # dev 브랜치 초기화 (전체 삭제 → 마이그레이션 재적용 → 마스터 시드)
 npm run build       # 프로덕션 빌드 검증
@@ -143,7 +145,7 @@ DATABASE_URL="<main Pooled>" DIRECT_URL="<main Direct>" npm run db:seed     # �
 ### 2-4. 이후 스키마 변경 워크플로우
 
 1. `prisma/schema.prisma` 수정 → `npm run db:migrate` (로컬 `dev` 브랜치에 적용 + 마이그레이션 파일 생성)
-2. `lib/leave.test.ts` 등 갱신 → `npm test` → `npx tsc --noEmit`
+2. `lib/leave/calc.test.ts` 등 갱신 → `npm run lint && npm run typecheck && npm test`
 3. 커밋 & push → Vercel 자동 배포
 4. 운영(`main`) 브랜치에 마이그레이션 적용:
    `DATABASE_URL="<main>" DIRECT_URL="<main>" npm run db:deploy`
@@ -152,28 +154,35 @@ DATABASE_URL="<main Pooled>" DIRECT_URL="<main Direct>" npm run db:seed     # �
 
 ## 프로젝트 구조
 
+라우트는 얇게 유지하고, 도메인 로직은 `lib/<기능>/` 모듈에 모읍니다.
+
 ```
 app/
-  (auth)/            로그인 · 회원가입 (+ actions.ts)
+  (auth)/            로그인 · 회원가입 (페이지 + 클라이언트 폼)
   (app)/             인증 필요 영역 (공통 레이아웃 = 상단 네비)
     main/            메인 — 월별 캘린더 + 연차 현황표
     leave/           연차 등록 + 내 신청 내역
     approvals/       승인/반려/취소 (상태·종류 필터)
-    settings/        연차설정 — 계정 목록 + 생성
-      [userId]/      계정 상세 — 정보/비밀번호/연차
+    settings/[userId]/  연차설정 — 계정 목록 · 생성 · 상세
 lib/
-  db.ts              Prisma 클라이언트 (pg 어댑터)
-  session*.ts        세션 토큰/쿠키
-  dal.ts             인증·권한 (requireUser/requireApprover/requireMaster)
-  leave.ts           연차 도메인 로직 (순수 함수, 테스트 대상)
-  queries.ts         조회 쿼리 모음
-  validation.ts      Zod 스키마
-components/           UI 컴포넌트
+  db · cn · form · schema · datetime · balance · revalidate   (공유)
+  auth/       jwt · session · password · dal · schema · actions
+  leave/      types · calc · schema · request(DTO) · queries · actions
+  approvals/  schema · queries · actions
+  users/      schema · queries · actions
+  dashboard/  queries      (메인 캘린더 · 잔여표)
+  calendar/   grid          (달력 그리드 계산)
+components/
+  ui/         디자인 시스템 (index.ts 배럴) — Button/Field/Card/Table/Badge/Stat/ChipLink …
+  calendar-month · request-table · balance-cells · nav
 proxy.ts             낙관적 인증 리다이렉트 (Next 16 미들웨어)
 prisma/
   schema.prisma      데이터 모델
   seed.ts            마스터 계정 시드
 ```
+
+- **디자인 토큰**: `app/globals.css` 의 `@theme` (surface/line/text 스케일/brand). 컴포넌트·페이지는 이 토큰만 사용.
+- **`@/lib/leave`** 는 클라이언트 공용 표면(타입·계산)만 노출. 서버 전용 쿼리/액션은 `@/lib/leave/queries` 처럼 직접 import.
 
 ## 알려진 사항
 
