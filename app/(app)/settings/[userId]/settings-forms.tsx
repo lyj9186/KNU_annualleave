@@ -9,17 +9,15 @@ import {
   FormMessage,
   SubmitButton,
 } from "@/components/ui";
-import { ROLE_LABELS } from "@/lib/leave";
+import {
+  ROLE_LABELS,
+  ROLE_OPTIONS,
+  USER_STATUS_LABELS,
+  USER_STATUS_OPTIONS,
+} from "@/lib/leave";
 import type { FormState } from "@/lib/form";
 
 const initial: FormState = {};
-
-const ROLES = ["USER", "TEAM_LEAD", "MASTER"] as const;
-const STATUSES = [
-  { value: "ACTIVE", label: "활성" },
-  { value: "PENDING", label: "승인대기" },
-  { value: "DISABLED", label: "비활성" },
-] as const;
 
 export function UserEditForm({
   userId,
@@ -45,7 +43,7 @@ export function UserEditForm({
       <div className="grid grid-cols-2 gap-3">
         <Field label="역할" htmlFor="e-role" error={state.errors?.role}>
           <Select id="e-role" name="role" defaultValue={role}>
-            {ROLES.map((r) => (
+            {ROLE_OPTIONS.map((r) => (
               <option key={r} value={r}>
                 {ROLE_LABELS[r]}
               </option>
@@ -54,9 +52,9 @@ export function UserEditForm({
         </Field>
         <Field label="상태" htmlFor="e-status" error={state.errors?.status}>
           <Select id="e-status" name="status" defaultValue={status}>
-            {STATUSES.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
+            {USER_STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>
+                {USER_STATUS_LABELS[s]}
               </option>
             ))}
           </Select>
@@ -150,7 +148,7 @@ export function BalanceForm({
           />
         </Field>
       </div>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-muted">
         사용연차 = 승인된 연차·반차 합계 + 사용 조정. 잔여연차 = 가용연차 − 사용연차.
       </p>
       <SubmitButton pendingText="저장 중…">연차 저장</SubmitButton>

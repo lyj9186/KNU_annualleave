@@ -11,6 +11,7 @@ import {
   SubmitButton,
 } from "@/components/ui";
 import {
+  LEAVE_TYPES,
   LEAVE_TYPE_LABELS,
   computeLeaveDays,
   isHalfDay,
@@ -20,7 +21,6 @@ import { daysKo, parseDateOnly, todayIso } from "@/lib/datetime";
 import type { FormState } from "@/lib/form";
 
 const initial: FormState = {};
-const TYPES: LeaveType[] = ["ANNUAL", "HALF_AM", "HALF_PM", "SICK"];
 
 export function LeaveForm() {
   const [state, action] = useActionState(createLeaveRequest, initial);
@@ -59,7 +59,7 @@ export function LeaveForm() {
           value={type}
           onChange={(e) => setType(e.target.value as LeaveType)}
         >
-          {TYPES.map((t) => (
+          {LEAVE_TYPES.map((t) => (
             <option key={t} value={t}>
               {LEAVE_TYPE_LABELS[t]}
               {t === "ANNUAL" ? " (1일)" : ""}
@@ -93,14 +93,14 @@ export function LeaveForm() {
             onChange={(e) => setEnd(e.target.value)}
             readOnly={half}
             aria-disabled={half}
-            className={half ? "bg-slate-100 text-slate-400" : undefined}
+            className={half ? "bg-slate-100 text-faint" : undefined}
             required
           />
         </Field>
       </div>
 
       {preview ? (
-        <p className="rounded-md bg-slate-100 px-3 py-2 text-sm text-slate-600">
+        <p className="rounded-md bg-slate-100 px-3 py-2 text-sm text-subtle">
           {preview}
         </p>
       ) : null}

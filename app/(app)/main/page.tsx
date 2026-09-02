@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth/dal";
 import { getMonthLeaves, getYearOverview } from "@/lib/dashboard/queries";
 import { clampMonth } from "@/lib/calendar/grid";
 import { CalendarMonth } from "@/components/calendar-month";
+import { BalanceCells } from "@/components/balance-cells";
 import {
   Card,
   CardBody,
@@ -16,7 +17,6 @@ import {
   RoleBadge,
 } from "@/components/ui";
 import { daysNum } from "@/lib/datetime";
-import { cn } from "@/lib/cn";
 
 export default async function MainPage({
   searchParams,
@@ -71,30 +71,15 @@ export default async function MainPage({
               ) : (
                 overview.map((row) => (
                   <TR key={row.userId}>
-                    <TD className="font-medium text-slate-800">{row.name}</TD>
+                    <TD className="font-medium text-title">{row.name}</TD>
                     <TD>
                       <RoleBadge role={row.role} />
                     </TD>
-                    <TD className="tabular text-right">
-                      {daysNum(row.summary.granted)}
-                    </TD>
-                    <TD className="tabular text-right">
-                      {daysNum(row.summary.used)}
-                    </TD>
-                    <TD
-                      className={cn(
-                        "tabular text-right font-semibold",
-                        row.summary.remaining < 0
-                          ? "text-rose-600"
-                          : "text-slate-800",
-                      )}
-                    >
-                      {daysNum(row.summary.remaining)}
-                    </TD>
+                    <BalanceCells summary={row.summary} />
                     <TD className="tabular text-right text-amber-600">
                       {row.pendingDays > 0 ? daysNum(row.pendingDays) : "-"}
                     </TD>
-                    <TD className="tabular text-right text-slate-500">
+                    <TD className="tabular text-right text-muted">
                       {row.summary.sickUsed > 0
                         ? daysNum(row.summary.sickUsed)
                         : "-"}

@@ -19,7 +19,7 @@ export function DecisionForm({
 
   if (status !== "PENDING" && status !== "APPROVED") {
     return state.message ? (
-      <span className="text-xs text-slate-500">{state.message}</span>
+      <span className="text-xs text-muted">{state.message}</span>
     ) : null;
   }
 
@@ -30,7 +30,7 @@ export function DecisionForm({
         name="note"
         placeholder="메모(선택)"
         maxLength={200}
-        className="h-7 w-32 rounded border border-slate-300 px-2 text-xs focus:border-blue-500 focus:outline-none"
+        className="h-7 w-32 rounded border border-line-strong px-2 text-xs focus:border-brand-ring focus:outline-none"
       />
       <div className="flex gap-1">
         {status === "PENDING" ? (
@@ -70,7 +70,7 @@ export function DecisionForm({
       </div>
       {state.message ? (
         <span
-          className={`text-xs ${state.ok ? "text-emerald-600" : "text-rose-600"}`}
+          className={`text-xs ${state.ok ? "text-emerald-600" : "text-danger"}`}
         >
           {state.message}
         </span>

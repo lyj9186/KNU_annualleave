@@ -29,12 +29,12 @@ export default async function UserDetailPage({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/settings" className="text-sm text-blue-600 hover:underline">
+        <Link href="/settings" className="text-sm text-brand hover:underline">
           ← 목록
         </Link>
-        <h1 className="text-lg font-bold text-slate-800">{user.name}</h1>
+        <h1 className="text-lg font-bold text-title">{user.name}</h1>
         <RoleBadge role={user.role} />
-        <span className="text-sm text-slate-400">
+        <span className="text-sm text-faint">
           {user.loginId} · 가입 {ymdKo(user.createdAt)}
         </span>
       </div>
@@ -72,7 +72,7 @@ export default async function UserDetailPage({
               adjustDays={current?.adjustDays ?? 0}
             />
             {balances.length > 0 ? (
-              <ul className="mt-4 space-y-1 text-xs text-slate-500">
+              <ul className="mt-4 space-y-1 text-xs text-muted">
                 {balances.map((b) => (
                   <li key={b.id}>
                     {b.year}년 · 가용 {b.grantedDays}일 · 조정 {b.adjustDays}일

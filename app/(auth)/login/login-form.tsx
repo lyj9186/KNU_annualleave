@@ -12,7 +12,7 @@ export function LoginForm({ next }: { next?: string }) {
   const [state, action] = useActionState(login, initial);
 
   return (
-    <form action={action} className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <form action={action} className="space-y-4 rounded-lg border border-line bg-surface p-6 shadow-sm">
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       {state.message ? <FormMessage>{state.message}</FormMessage> : null}
@@ -41,9 +41,9 @@ export function LoginForm({ next }: { next?: string }) {
         로그인
       </SubmitButton>
 
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-muted">
         계정이 없으신가요?{" "}
-        <Link href="/signup" className="font-medium text-blue-600 hover:underline">
+        <Link href="/signup" className="font-medium text-brand hover:underline">
           회원가입
         </Link>
       </p>

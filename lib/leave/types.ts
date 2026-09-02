@@ -57,6 +57,14 @@ export const USER_STATUS_LABELS: Record<UserStatus, string> = {
 
 /** 종류 선택 순서 */
 export const LEAVE_TYPES: LeaveType[] = ["ANNUAL", "HALF_AM", "HALF_PM", "SICK"];
+/** 역할 선택 순서 (폼) */
+export const ROLE_OPTIONS: Role[] = ["USER", "TEAM_LEAD", "MASTER"];
+/** 계정 상태 선택 순서 (폼) */
+export const USER_STATUS_OPTIONS: UserStatus[] = [
+  "ACTIVE",
+  "PENDING",
+  "DISABLED",
+];
 /** 상태 탭 순서 */
 export const LEAVE_STATUSES: LeaveStatus[] = [
   "PENDING",

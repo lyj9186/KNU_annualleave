@@ -48,23 +48,23 @@ export function RequestTable({
           rows.map((r) => (
             <TR key={r.id}>
               {showUser ? (
-                <TD className="font-medium text-slate-800">{r.userName}</TD>
+                <TD className="font-medium text-title">{r.userName}</TD>
               ) : null}
               <TD>
                 <TypeBadge type={r.type} />
               </TD>
-              <TD className="whitespace-nowrap text-slate-600">
+              <TD className="whitespace-nowrap text-subtle">
                 {rangeKo(r.startDate, r.endDate)}
               </TD>
               <TD className="tabular text-right">{daysKo(r.days)}</TD>
-              <TD className="max-w-[220px] truncate text-slate-500" title={r.reason ?? ""}>
+              <TD className="max-w-[220px] truncate text-muted" title={r.reason ?? ""}>
                 {r.reason || "-"}
               </TD>
               <TD>
                 <StatusBadge status={r.status} />
               </TD>
               {showDecision ? (
-                <TD className="text-xs text-slate-500">
+                <TD className="text-xs text-muted">
                   {r.deciderName ? (
                     <>
                       {r.deciderName}

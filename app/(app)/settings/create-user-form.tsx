@@ -9,7 +9,7 @@ import {
   FormMessage,
   SubmitButton,
 } from "@/components/ui";
-import { DEFAULT_ANNUAL_DAYS, ROLE_LABELS } from "@/lib/leave";
+import { DEFAULT_ANNUAL_DAYS, ROLE_LABELS, ROLE_OPTIONS } from "@/lib/leave";
 import type { FormState } from "@/lib/form";
 
 const initial: FormState = {};
@@ -40,7 +40,7 @@ export function CreateUserForm() {
         </Field>
         <Field label="역할" htmlFor="c-role" error={state.errors?.role}>
           <Select id="c-role" name="role" defaultValue="USER">
-            {(["USER", "TEAM_LEAD", "MASTER"] as const).map((r) => (
+            {ROLE_OPTIONS.map((r) => (
               <option key={r} value={r}>
                 {ROLE_LABELS[r]}
               </option>

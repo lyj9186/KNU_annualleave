@@ -1,9 +1,19 @@
-import Link from "next/link";
 import { buildMonthGrid, coversDay } from "@/lib/calendar/grid";
 import { cn } from "@/lib/cn";
 import { LEAVE_TYPE_SHORT } from "@/lib/leave";
 import type { CalendarLeave } from "@/lib/dashboard/queries";
 import { WEEKDAYS, daysNum, todayIso } from "@/lib/datetime";
+import { ChipLink } from "@/components/ui";
+
+function isSingleDay(l: CalendarLeave): boolean {
+  return l.startDate.getTime() === l.endDate.getTime();
+}
+
+/** 달력 칩 일수 표기 (반차 0.5 / 하루짜리만 숫자, 다일은 생략) */
+function chipDays(l: CalendarLeave): string {
+  if (l.type === "HALF_AM" || l.type === "HALF_PM") return " 0.5";
+  return isSingleDay(l) ? ` ${daysNum(l.days)}` : "";
+}
 
 export function CalendarMonth({
   year,
@@ -22,24 +32,30 @@ export function CalendarMonth({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-slate-800">
+        <h2 className="text-base font-semibold text-title">
           {year}년 {month0 + 1}월
         </h2>
         <div className="flex items-center gap-1">
-          <NavLink href={`/main?y=${prev.y}&m=${prev.m}`} label="이전" />
-          <NavLink href="/main" label="이번 달" />
-          <NavLink href={`/main?y=${next.y}&m=${next.m}`} label="다음" />
+          <ChipLink variant="plain" href={`/main?y=${prev.y}&m=${prev.m}`}>
+            이전
+          </ChipLink>
+          <ChipLink variant="plain" href="/main">
+            이번 달
+          </ChipLink>
+          <ChipLink variant="plain" href={`/main?y=${next.y}&m=${next.m}`}>
+            다음
+          </ChipLink>
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <div className="min-w-[720px]">
-          <div className="grid grid-cols-7 border-l border-t border-slate-200 text-xs">
+          <div className="grid grid-cols-7 border-l border-t border-line text-xs">
             {WEEKDAYS.map((w, i) => (
               <div
                 key={w}
                 className={cn(
-                  "border-r border-b border-slate-200 bg-slate-50 py-1.5 text-center font-medium",
+                  "border-r border-b border-line bg-surface-muted py-1.5 text-center font-medium",
                   i === 0 && "text-rose-500",
                   i === 6 && "text-blue-500",
                 )}
@@ -52,13 +68,11 @@ export function CalendarMonth({
               const dayLeaves = leaves.filter((l) =>
                 coversDay(cell.date, l.startDate, l.endDate),
               );
-              const isSingleDay = (l: (typeof leaves)[number]) =>
-                l.startDate.getTime() === l.endDate.getTime();
               return (
                 <div
                   key={cell.iso}
                   className={cn(
-                    "min-h-[92px] border-r border-b border-slate-200 p-1",
+                    "min-h-[92px] border-r border-b border-line p-1",
                     !cell.inMonth && "bg-slate-50/60",
                     cell.iso === todayStr && "bg-blue-50",
                   )}
@@ -66,7 +80,7 @@ export function CalendarMonth({
                   <div
                     className={cn(
                       "mb-1 text-right text-xs",
-                      !cell.inMonth ? "text-slate-300" : "text-slate-500",
+                      !cell.inMonth ? "text-slate-300" : "text-muted",
                       cell.dow === 0 && cell.inMonth && "text-rose-500",
                       cell.dow === 6 && cell.inMonth && "text-blue-500",
                     )}
@@ -88,11 +102,7 @@ export function CalendarMonth({
                         title={`${l.userName} · ${LEAVE_TYPE_SHORT[l.type]} ${daysNum(l.days)}일${l.status === "PENDING" ? " (대기)" : ""}`}
                       >
                         {l.userName} {LEAVE_TYPE_SHORT[l.type]}
-                        {l.type === "HALF_AM" || l.type === "HALF_PM"
-                          ? " 0.5"
-                          : isSingleDay(l)
-                            ? ` ${daysNum(l.days)}`
-                            : ""}
+                        {chipDays(l)}
                         {l.status === "PENDING" ? "*" : ""}
                       </li>
                     ))}
@@ -103,18 +113,9 @@ export function CalendarMonth({
           </div>
         </div>
       </div>
-      <p className="mt-2 text-xs text-slate-400">* 표시는 승인 대기 중인 신청입니다.</p>
+      <p className="mt-2 text-xs text-faint">
+        * 표시는 승인 대기 중인 신청입니다.
+      </p>
     </div>
-  );
-}
-
-function NavLink({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-50"
-    >
-      {label}
-    </Link>
   );
 }

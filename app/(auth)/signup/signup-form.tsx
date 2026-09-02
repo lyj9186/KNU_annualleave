@@ -13,11 +13,11 @@ export function SignupForm() {
 
   if (state.ok) {
     return (
-      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm">
+      <div className="space-y-4 rounded-lg border border-line bg-surface p-6 text-center shadow-sm">
         <FormMessage ok>{state.message}</FormMessage>
         <Link
           href="/login"
-          className="inline-block font-medium text-blue-600 hover:underline"
+          className="inline-block font-medium text-brand hover:underline"
         >
           로그인 페이지로
         </Link>
@@ -28,7 +28,7 @@ export function SignupForm() {
   return (
     <form
       action={action}
-      className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+      className="space-y-4 rounded-lg border border-line bg-surface p-6 shadow-sm"
     >
       {state.message ? <FormMessage>{state.message}</FormMessage> : null}
 
@@ -90,9 +90,9 @@ export function SignupForm() {
         가입 신청
       </SubmitButton>
 
-      <p className="text-center text-sm text-slate-500">
+      <p className="text-center text-sm text-muted">
         이미 계정이 있으신가요?{" "}
-        <Link href="/login" className="font-medium text-blue-600 hover:underline">
+        <Link href="/login" className="font-medium text-brand hover:underline">
           로그인
         </Link>
       </p>

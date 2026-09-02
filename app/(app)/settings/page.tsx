@@ -13,18 +13,13 @@ import {
   TR,
   EmptyRow,
   RoleBadge,
+  UserStatusText,
   Button,
 } from "@/components/ui";
+import { BalanceCells } from "@/components/balance-cells";
 import { CreateUserForm } from "./create-user-form";
 import { approvePendingUser } from "@/lib/users/actions";
-import { daysNum } from "@/lib/datetime";
 import { cn } from "@/lib/cn";
-
-const STATUS_LABEL = {
-  PENDING: "승인대기",
-  ACTIVE: "활성",
-  DISABLED: "비활성",
-} as const;
 
 export default async function SettingsPage() {
   await requireMaster();
@@ -62,34 +57,19 @@ export default async function SettingsPage() {
                 <EmptyRow colSpan={8} />
               ) : (
                 users.map((u) => (
-                  <TR key={u.id} className={cn(u.status === "PENDING" && "bg-amber-50")}>
-                    <TD className="font-medium text-slate-800">{u.name}</TD>
-                    <TD className="text-slate-500">{u.loginId}</TD>
+                  <TR
+                    key={u.id}
+                    className={cn(u.status === "PENDING" && "bg-amber-50")}
+                  >
+                    <TD className="font-medium text-title">{u.name}</TD>
+                    <TD className="text-muted">{u.loginId}</TD>
                     <TD>
                       <RoleBadge role={u.role} />
                     </TD>
                     <TD>
-                      <span
-                        className={cn(
-                          "text-xs font-medium",
-                          u.status === "ACTIVE" && "text-emerald-600",
-                          u.status === "PENDING" && "text-amber-600",
-                          u.status === "DISABLED" && "text-slate-400",
-                        )}
-                      >
-                        {STATUS_LABEL[u.status]}
-                      </span>
+                      <UserStatusText status={u.status} />
                     </TD>
-                    <TD className="tabular text-right">{daysNum(u.summary.granted)}</TD>
-                    <TD className="tabular text-right">{daysNum(u.summary.used)}</TD>
-                    <TD
-                      className={cn(
-                        "tabular text-right font-semibold",
-                        u.summary.remaining < 0 ? "text-rose-600" : "text-slate-800",
-                      )}
-                    >
-                      {daysNum(u.summary.remaining)}
-                    </TD>
+                    <BalanceCells summary={u.summary} />
                     <TD className="text-right">
                       <div className="flex justify-end gap-1">
                         {u.status === "PENDING" ? (

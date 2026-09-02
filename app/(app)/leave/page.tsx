@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth/dal";
 import { getUserRequests, getUserYearSummary } from "@/lib/leave/queries";
-import { Card, CardBody, CardHeader, Button } from "@/components/ui";
+import { Card, CardBody, CardHeader, Button, Stat } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
 import { LeaveForm } from "./leave-form";
 import { withdrawLeaveRequest } from "@/lib/leave/actions";
@@ -31,7 +31,7 @@ export default async function LeavePage() {
               />
             </dl>
             {summary.sickUsed > 0 ? (
-              <p className="mt-3 text-center text-xs text-slate-500">
+              <p className="mt-3 text-center text-xs text-muted">
                 병가 사용 {daysNum(summary.sickUsed)}일 (연차 미차감)
               </p>
             ) : null}
@@ -65,29 +65,6 @@ export default async function LeavePage() {
           />
         </CardBody>
       </Card>
-    </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: string;
-  accent?: boolean;
-}) {
-  return (
-    <div className="rounded-md bg-slate-50 py-3">
-      <dt className="text-xs text-slate-500">{label}</dt>
-      <dd
-        className={`tabular mt-1 text-lg font-bold ${
-          accent ? "text-rose-600" : "text-slate-800"
-        }`}
-      >
-        {value}
-      </dd>
     </div>
   );
 }
