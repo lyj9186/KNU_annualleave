@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="사용자·팀장·마스터 세 역할별로 정리한 연차 관리 시스템 사용 안내">
+<title>역할별 연차 매뉴얼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #eef2f7;
+    --surface: #ffffff;
+    --surface-2: #f6f9fc;
+    --title: #101a2b;
+    --ink: #29323f;
+    --body: #3c4756;
+    --muted: #667487;
+    --faint: #93a0b2;
+    --line: #e3e9f0;
+    --line-strong: #ccd6e2;
+
+    --brand: #2158e6;
+    --brand-strong: #1a45bb;
+    --brand-wash: #eaf0ff;
+
+    --role-common: #2158e6;
+    --role-user: #56617a;
+    --role-lead: #0f9488;
+    --role-master: #7a3ed6;
+
+    --ok: #0a8f5b;
+    --warn: #b7791f;
+    --warn-line: #e6b95c;
+    --warn-wash: #fdf5e6;
+    --no: #d43d63;
+
+    --lt-annual: #2f74e6;
+    --lt-am: #0898c9;
+    --lt-pm: #5b62e0;
+    --lt-sick: #cf47c9;
+    --lt-wait: #e0952a;
+    --lt-ok: #17a06a;
+    --lt-reject: #e5556f;
+    --lt-cancel: #9aa7b7;
+
+    --shadow-sm: 0 1px 2px rgba(16, 26, 43, .06);
+    --shadow-md: 0 1px 2px rgba(16, 26, 43, .05), 0 14px 34px -18px rgba(16, 26, 43, .22);
+    --radius: 12px;
+
+    --font-sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, -apple-system, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0a0f16;
+      --surface: #141d29;
+      --surface-2: #0f1721;
+      --title: #f1f5fa;
+      --ink: #dbe3ee;
+      --body: #bcc7d5;
+      --muted: #8593a4;
+      --faint: #667484;
+      --line: #263140;
+      --line-strong: #384657;
+
+      --brand: #79a7ff;
+      --brand-strong: #a7c5ff;
+      --brand-wash: #17233c;
+
+      --role-common: #79a7ff;
+      --role-user: #9aa6bd;
+      --role-lead: #34d3c2;
+      --role-master: #bd9bf2;
+
+      --ok: #3bd68f;
+      --warn: #e8b667;
+      --warn-line: #6d5a2f;
+      --warn-wash: #241f14;
+      --no: #fb7a97;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+      --shadow-md: 0 1px 2px rgba(0, 0, 0, .3), 0 16px 40px -20px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0a0f16;
+    --surface: #141d29;
+    --surface-2: #0f1721;
+    --title: #f1f5fa;
+    --ink: #dbe3ee;
+    --body: #bcc7d5;
+    --muted: #8593a4;
+    --faint: #667484;
+    --line: #263140;
+    --line-strong: #384657;
+
+    --brand: #79a7ff;
+    --brand-strong: #a7c5ff;
+    --brand-wash: #17233c;
+
+    --role-common: #79a7ff;
+    --role-user: #9aa6bd;
+    --role-lead: #34d3c2;
+    --role-master: #bd9bf2;
+
+    --ok: #3bd68f;
+    --warn: #e8b667;
+    --warn-line: #6d5a2f;
+    --warn-wash: #241f14;
+    --no: #fb7a97;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, .3), 0 16px 40px -20px rgba(0, 0, 0, .6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--body);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  h1, h2, h3, h4 { color: var(--title); text-wrap: balance; line-height: 1.3; }
+  a { color: var(--brand); text-underline-offset: 3px; }
+
+  code, .mono { font-family: var(--font-mono); }
+
+  /* ---------- shell ---------- */
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 clamp(1.1rem, 4vw, 2.5rem) 5rem;
+  }
+
+  .masthead {
+    padding: clamp(2.6rem, 7vw, 4.4rem) 0 clamp(1.6rem, 4vw, 2.4rem);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .masthead .eyebrow {
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 .7rem;
+  }
+  .masthead h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(1.9rem, 5.4vw, 3rem);
+    letter-spacing: -.02em;
+  }
+  .masthead p.lede {
+    margin: .9rem 0 0;
+    max-width: 46ch;
+    color: var(--muted);
+    font-size: 1.02rem;
+  }
+
+  .theme-toggle {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .85rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    font: 500 .82rem/1 var(--font-sans);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  .theme-toggle:hover { color: var(--title); border-color: var(--brand); }
+  .theme-toggle svg { width: 15px; height: 15px; }
+
+  /* ---------- layout ---------- */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.4rem;
+    padding-top: 2.4rem;
+  }
+  @media (min-width: 940px) {
+    .layout { grid-template-columns: 214px minmax(0, 1fr); gap: 3.4rem; }
+  }
+
+  /* ---------- rail ---------- */
+  .rail { align-self: start; }
+  @media (min-width: 940px) {
+    .rail { position: sticky; top: 1.4rem; }
+  }
+  .rail nav {
+    display: flex;
+    gap: .25rem;
+    overflow-x: auto;
+    padding-bottom: .4rem;
+    scrollbar-width: none;
+  }
+  .rail nav::-webkit-scrollbar { display: none; }
+  @media (min-width: 940px) {
+    .rail nav { flex-direction: column; overflow: visible; padding-bottom: 0; }
+  }
+  .rail a {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .5rem .7rem;
+    border-radius: 8px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: .92rem;
+    white-space: nowrap;
+    border-left: 2px solid transparent;
+  }
+  .rail a .dot {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--role, var(--faint));
+    flex-shrink: 0;
+  }
+  .rail a:hover { color: var(--title); background: var(--surface-2); }
+  .rail a.active {
+    color: var(--title);
+    font-weight: 600;
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (min-width: 940px) {
+    .rail a.active { background: transparent; box-shadow: none; border-left-color: var(--role, var(--brand)); border-radius: 0 8px 8px 0; }
+  }
+
+  .legend {
+    display: none;
+    margin-top: 1.6rem;
+    padding: 1rem 1.05rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-size: .82rem;
+  }
+  @media (min-width: 940px) { .legend { display: block; } }
+  .legend h4 {
+    margin: 0 0 .7rem;
+    font-family: var(--font-mono);
+    font-size: .68rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .48rem; }
+  .legend li { display: flex; align-items: center; gap: .55rem; color: var(--body); }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ---------- content ---------- */
+  main { min-width: 0; }
+  section[id] { scroll-margin-top: 1.2rem; }
+  section + section { margin-top: 3.6rem; }
+
+  .role-head { border-top: 3px solid var(--role, var(--brand)); padding-top: 1.15rem; }
+  .role-head .tag {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--role, var(--brand));
+    font-weight: 500;
+  }
+  .role-head h2 {
+    margin: .35rem 0 0;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    letter-spacing: -.015em;
+  }
+  .role-head p { margin: .6rem 0 0; color: var(--muted); max-width: 60ch; }
+  .role-head .menu {
+    margin-top: .9rem;
+    font-size: .86rem;
+    color: var(--body);
+  }
+  .role-head .menu b { color: var(--muted); font-weight: 500; font-family: var(--font-mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; margin-right: .5rem; }
+
+  .tasks { display: grid; gap: 1.1rem; margin-top: 1.7rem; }
+
+  .task {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.4rem clamp(1.1rem, 3vw, 1.7rem);
+    box-shadow: var(--shadow-md);
+  }
+  .task > h3 {
+    margin: 0;
+    font-size: 1.12rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .path {
+    margin-top: .5rem;
+    font-family: var(--font-mono);
+    font-size: .78rem;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .3rem .1rem;
+  }
+  .path .seg { color: var(--body); }
+  .path .arw { color: var(--faint); padding: 0 .15rem; }
+
+  ol.steps {
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+    display: grid;
+    gap: .8rem;
+  }
+  ol.steps > li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 2.3rem;
+    color: var(--body);
+  }
+  ol.steps > li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: .05rem;
+    width: 1.55rem;
+    height: 1.55rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--brand-wash);
+    color: var(--brand-strong);
+    font: 600 .82rem/1 var(--font-mono);
+  }
+
+  ul.plain { margin: 1.1rem 0 0; padding-left: 1.15rem; display: grid; gap: .55rem; color: var(--body); }
+  ul.plain li::marker { color: var(--faint); }
+
+  dl.facts { margin: 1.1rem 0 0; display: grid; gap: .9rem; }
+  dl.facts > div { display: grid; gap: .15rem; }
+  dl.facts dt { font-weight: 600; color: var(--title); font-size: .96rem; }
+  dl.facts dd { margin: 0; color: var(--body); font-size: .95rem; }
+
+  .note {
+    margin-top: 1.1rem;
+    padding: .75rem 1rem;
+    border-left: 3px solid var(--line-strong);
+    background: var(--surface-2);
+    border-radius: 0 8px 8px 0;
+    font-size: .9rem;
+    color: var(--body);
+  }
+  .note.warn { border-left-color: var(--warn-line); background: var(--warn-wash); }
+  .note.warn b { color: var(--warn); }
+  .note + .note { margin-top: .55rem; }
+
+  .tok {
+    font-family: var(--font-mono);
+    font-size: .82em;
+    padding: .08em .42em;
+    border-radius: 5px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* ---------- matrix ---------- */
+  .matrix-card {
+    margin-top: 2.4rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+  .matrix-card > header {
+    padding: 1.1rem clamp(1.1rem, 3vw, 1.6rem) .3rem;
+  }
+  .matrix-card > header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  .matrix-scroll { overflow-x: auto; padding: .8rem clamp(.4rem, 2vw, 1rem) 1rem; }
+  table.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+    min-width: 460px;
+  }
+  table.matrix th, table.matrix td {
+    padding: .68rem .8rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+  }
+  table.matrix thead th {
+    font-size: .78rem;
+    letter-spacing: .04em;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  table.matrix tbody th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--title);
+  }
+  table.matrix tbody tr:last-child td,
+  table.matrix tbody tr:last-child th { border-bottom: 0; }
+  table.matrix .yes { color: var(--ok); font-weight: 600; }
+  table.matrix .no { color: var(--faint); }
+  table.matrix .part { color: var(--body); font-size: .82rem; font-family: var(--font-mono); }
+  table.matrix col.role-col { width: 20%; }
+  .matrix-note {
+    padding: 0 clamp(1.1rem, 3vw, 1.6rem) 1.2rem;
+    font-size: .84rem;
+    color: var(--muted);
+  }
+
+  /* ---------- calendar swatch inline ---------- */
+  .cal-key { display: flex; flex-wrap: wrap; gap: .3rem .9rem; margin-top: 1rem; font-size: .86rem; }
+  .cal-key span { display: inline-flex; align-items: center; gap: .4rem; color: var(--body); }
+  .cal-key i { width: 9px; height: 9px; border-radius: 999px; display: inline-block; }
+
+  footer.doc-foot {
+    margin-top: 4rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .6rem;
+    font-size: .84rem;
+    color: var(--muted);
+  }
+  footer.doc-foot .mono { font-family: var(--font-mono); font-size: .78rem; }
+
+  :where(a, button):focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media print {
+    .rail, .theme-toggle { display: none !important; }
+    body { background: #fff; color: #000; font-size: 11pt; }
+    .layout { display: block; }
+    .task, .matrix-card { box-shadow: none; border-color: #bbb; break-inside: avoid; }
+    section + section { margin-top: 1.4rem; }
+    .masthead { padding-top: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">연차 관리 시스템 · 사용 안내</p>
+      <h1>역할별 연차 매뉴얼</h1>
+      <p class="lede">사용자 · 팀장 · 마스터, 세 역할이 각자 무엇을 할 수 있고 어떻게 하는지 정리했습니다.</p>
+    </div>
+    <button class="theme-toggle" type="button" id="themeBtn" aria-label="밝은/어두운 화면 전환">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+      <span id="themeLabel">화면</span>
+    </button>
+  </header>
+
+  <div class="layout">
+
+    <aside class="rail">
+      <nav aria-label="역할 바로가기">
+        <a href="#common"><span class="dot" style="--role:var(--role-common)"></span>공통</a>
+        <a href="#user"><span class="dot" style="--role:var(--role-user)"></span>사용자</a>
+        <a href="#lead"><span class="dot" style="--role:var(--role-lead)"></span>팀장</a>
+        <a href="#master"><span class="dot" style="--role:var(--role-master)"></span>마스터</a>
+      </nav>
+
+      <div class="legend">
+        <h4>캘린더 색</h4>
+        <ul>
+          <li><span class="swatch" style="background:var(--lt-annual)"></span>승인된 연차</li>
+          <li><span class="swatch" style="background:var(--lt-sick)"></span>병가</li>
+          <li><span class="swatch" style="background:var(--lt-wait)"></span>승인 대기 <span class="mono" style="color:var(--muted)">*</span></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main>
+
+      <!-- permission matrix -->
+      <div class="matrix-card">
+        <header><h2>권한 한눈에 보기</h2></header>
+        <div class="matrix-scroll">
+          <table class="matrix">
+            <colgroup>
+              <col>
+              <col class="role-col"><col class="role-col"><col class="role-col">
+            </colgroup>
+            <thead>
+              <tr><th scope="col">기능</th><th scope="col">사용자</th><th scope="col">팀장</th><th scope="col">마스터</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">메인 캘린더 (전 직원)</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+              <tr><th scope="row">메인 하단 현황표</th><td class="part">본인만</td><td class="part">전체</td><td class="part">전체</td></tr>
+              <tr><th scope="row">연차 등록 · 철회</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+              <tr><th scope="row">승인 · 반려 · 취소</th><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+              <tr><th scope="row">연차현황 조회 · CSV 다운로드</th><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+              <tr><th scope="row">계정 · 비밀번호 · 잔여 관리</th><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="matrix-note">팀장과 마스터는 <b>본인이 낸 신청도 직접 승인</b>할 수 있습니다. 마스터는 연차를 사용하지 않아 캘린더 · 현황표 · 연차현황에 표시되지 않습니다.</p>
+      </div>
+
+      <!-- COMMON -->
+      <section id="common" style="--role:var(--role-common)">
+        <div class="role-head">
+          <span class="tag">공통 · 모든 사용자</span>
+          <h2>로그인하고 화면을 이해하기</h2>
+          <p>역할과 상관없이 처음 알아둘 것들입니다. 아래 용어와 규칙은 모든 화면에서 똑같이 적용됩니다.</p>
+        </div>
+
+        <div class="tasks">
+
+          <article class="task">
+            <h3>로그인</h3>
+            <div class="path"><span class="seg">로그인 화면</span></div>
+            <ol class="steps">
+              <li>아이디와 비밀번호를 입력하고 <span class="tok">로그인</span>을 누릅니다.</li>
+              <li>처음 가입한 계정은 <b>승인대기</b> 상태입니다. 마스터가 활성화한 뒤에 로그인할 수 있습니다.</li>
+              <li>비밀번호를 잊었다면 마스터에게 초기화를 요청하세요.</li>
+            </ol>
+            <div class="note">비밀번호는 <b>4자 이상</b>입니다.</div>
+          </article>
+
+          <article class="task">
+            <h3>회원가입</h3>
+            <div class="path"><span class="seg">로그인 화면</span><span class="arw">›</span><span class="seg">회원가입</span></div>
+            <ol class="steps">
+              <li>아이디(3~30자, 영문 · 숫자 · <span class="tok">. _ -</span>), 이름, 비밀번호(4자 이상)를 입력합니다.</li>
+              <li><span class="tok">가입 신청</span>을 누르면 <b>승인대기</b> 상태로 등록됩니다.</li>
+              <li>마스터가 계정을 활성화하면 로그인할 수 있습니다.</li>
+            </ol>
+          </article>
+
+          <article class="task">
+            <h3>화면 구성</h3>
+            <ul class="plain">
+              <li>상단 왼쪽 — 역할에 따라 달라지는 <b>메뉴</b>.</li>
+              <li>상단 오른쪽 — 역할 배지 · 이름 · <span class="tok">로그아웃</span>.</li>
+              <li>본문 — 선택한 메뉴의 화면.</li>
+            </ul>
+          </article>
+
+          <article class="task">
+            <h3>알아두기 — 용어와 규칙</h3>
+            <dl class="facts">
+              <div>
+                <dt>연차 종류</dt>
+                <dd>연차 <span class="tok">1일</span> · 오전 반차 / 오후 반차 <span class="tok">0.5일</span> · 병가는 사용일수만 기록하고 <b>연차에서 차감되지 않습니다</b>.</dd>
+              </div>
+              <div>
+                <dt>영업일</dt>
+                <dd>월~금만 일수로 계산합니다. <b>공휴일은 자동으로 빠지지 않으니</b> 신청할 때 직접 확인하세요.</dd>
+              </div>
+              <div>
+                <dt>잔여연차 계산</dt>
+                <dd>가용연차 − (승인된 연차 · 반차 합계 + 마스터 수동 조정).</dd>
+              </div>
+              <div>
+                <dt>신청 상태</dt>
+                <dd>대기 → 승인 / 반려 / 취소. <b>승인</b>만 연차에 반영되고, 반려 · 취소는 반영되지 않습니다.</dd>
+              </div>
+              <div>
+                <dt>날짜 표기</dt>
+                <dd><span class="tok">2026-09-02 (수)</span> 형식으로 표시됩니다.</dd>
+              </div>
+            </dl>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- USER -->
+      <section id="user" style="--role:var(--role-user)">
+        <div class="role-head">
+          <span class="tag">사용자</span>
+          <h2>연차를 신청하고 내 현황 보기</h2>
+          <p>연차를 등록하고, 대기 중인 신청을 철회하고, 내 잔여 연차를 확인합니다.</p>
+          <p class="menu"><b>메뉴</b>메인 · 연차 등록</p>
+        </div>
+
+        <div class="tasks">
+
+          <article class="task">
+            <h3>메인 — 캘린더와 내 현황</h3>
+            <div class="path"><span class="seg">메인</span></div>
+            <ul class="plain">
+              <li>월별 캘린더에는 <b>전 직원</b>의 연차가 함께 표시됩니다.</li>
+              <li>연 · 월 드롭다운, <span class="tok">‹</span> <span class="tok">›</span>, <span class="tok">이번 달</span> 버튼으로 달을 옮깁니다.</li>
+              <li>모바일에서는 점이 찍힌 미니 달력에서 날짜를 누르면 그 날의 목록이 열립니다.</li>
+              <li>캘린더 아래 <b>내 연차 현황</b>에는 본인의 가용 · 사용 · 잔여만 나옵니다.</li>
+            </ul>
+            <div class="cal-key">
+              <span><i style="background:var(--lt-annual)"></i>승인된 연차</span>
+              <span><i style="background:var(--lt-sick)"></i>병가</span>
+              <span><i style="background:var(--lt-wait)"></i>승인 대기 <span class="mono" style="color:var(--muted)">*</span></span>
+            </div>
+          </article>
+
+          <article class="task">
+            <h3>연차 등록</h3>
+            <div class="path"><span class="seg">연차 등록</span></div>
+            <ol class="steps">
+              <li><b>종류</b>를 고릅니다 — 연차 / 오전 반차 / 오후 반차 / 병가.</li>
+              <li><b>시작일</b>과 <b>종료일</b>을 선택합니다. 반차는 하루만 신청되어 종료일이 자동으로 맞춰집니다.</li>
+              <li><b>신청 일수</b>가 미리 표시됩니다. 필요하면 사유(200자)를 적습니다.</li>
+              <li><span class="tok">연차 신청</span>을 누르면 <b>대기</b> 상태로 접수되고 팀장 승인을 기다립니다.</li>
+            </ol>
+            <div class="note warn"><b>주의</b> — 선택한 기간에 영업일(월~금)이 없으면 신청할 수 없습니다.</div>
+            <div class="note">기간이 겹치는 본인 신청(대기 · 승인)이 있으면 신청할 수 없습니다. 단, <b>같은 날 오전 반차 + 오후 반차</b>는 함께 신청할 수 있습니다.</div>
+          </article>
+
+          <article class="task">
+            <h3>신청 철회</h3>
+            <div class="path"><span class="seg">연차 등록</span><span class="arw">›</span><span class="seg">내 신청 내역</span></div>
+            <ol class="steps">
+              <li><b>내 신청 내역</b>에서 <b>대기</b> 상태인 신청을 찾습니다.</li>
+              <li><span class="tok">철회</span>를 누릅니다.</li>
+            </ol>
+            <div class="note">이미 승인 · 반려 · 취소된 신청은 철회할 수 없습니다. 승인된 연차를 되돌리려면 팀장에게 <b>취소</b>를 요청하세요.</div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- LEAD -->
+      <section id="lead" style="--role:var(--role-lead)">
+        <div class="role-head">
+          <span class="tag">팀장</span>
+          <h2>연차를 승인하고 월별 현황 관리하기</h2>
+          <p>사용자의 모든 기능에 더해, 신청을 승인 · 반려 · 취소하고 월별 연차현황을 조회 · 다운로드합니다.</p>
+          <p class="menu"><b>메뉴</b>메인 · 연차 등록 · 승인 · 연차현황</p>
+        </div>
+
+        <div class="tasks">
+
+          <article class="task">
+            <h3>승인 대기 확인 (로그인 시 알람)</h3>
+            <div class="path"><span class="seg">메인</span></div>
+            <ul class="plain">
+              <li>처리할 신청이 있으면 메인 상단에 <b>주황색 배너</b>가 뜹니다 — "승인 대기 중인 연차 신청이 N건 있습니다".</li>
+              <li><span class="tok">승인</span> 메뉴 옆의 <b>빨간 숫자</b>가 남은 대기 건수입니다.</li>
+              <li>메인 하단 현황표에서는 <b>전 직원</b>의 연차 현황을 볼 수 있습니다.</li>
+            </ul>
+          </article>
+
+          <article class="task">
+            <h3>승인 처리</h3>
+            <div class="path"><span class="seg">승인</span></div>
+            <ol class="steps">
+              <li>상태 탭에서 <b>대기</b>를 선택합니다. 승인 / 반려 / 취소 탭에서 지난 처리 내역도 볼 수 있습니다.</li>
+              <li>필요하면 <b>종류</b> 필터로 좁힙니다 — 전체 / 연차 / 오전 반차 / 오후 반차 / 병가.</li>
+              <li>각 신청에 메모(선택)를 적고 <span class="tok">승인</span> · <span class="tok">반려</span> · <span class="tok">취소</span> 중 하나를 누릅니다. 이미 승인된 건은 <b>취소</b>만 가능합니다.</li>
+            </ol>
+            <div class="note"><b>본인이 낸 신청도 직접 처리</b>할 수 있습니다.</div>
+            <div class="note warn"><b>주의</b> — <b>승인</b>해야 연차에 반영됩니다. 반려 · 취소는 반영되지 않습니다.</div>
+          </article>
+
+          <article class="task">
+            <h3>월별 연차현황 &amp; 엑셀 다운로드</h3>
+            <div class="path"><span class="seg">연차현황</span></div>
+            <ol class="steps">
+              <li>연 · 월 드롭다운으로 조회할 달을 고릅니다.</li>
+              <li>그 달에 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>).</li>
+              <li><span class="tok">엑셀(CSV) 다운로드</span>를 누르면 <span class="tok">연차현황_2026-09.csv</span> 파일이 저장됩니다. 엑셀에서 바로 열리고 한글도 깨지지 않습니다.</li>
+            </ol>
+            <div class="note">예시 한 줄 — <span class="tok">김팀장 · 2026-09-15 · 오전반차 · 0.5</span>. 마스터는 이 목록에 나타나지 않습니다.</div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- MASTER -->
+      <section id="master" style="--role:var(--role-master)">
+        <div class="role-head">
+          <span class="tag">마스터</span>
+          <h2>계정과 연차 잔여 관리하기</h2>
+          <p><b>마스터는 연차를 신청하지 않습니다.</b> "연차 등록" 메뉴가 없고, 캘린더 · 현황표 · 연차현황에도 표시되지 않습니다. 승인과 연차현황 사용법은 팀장과 같습니다.</p>
+          <p class="menu"><b>메뉴</b>메인 · 승인 · 연차현황 · 연차설정</p>
+        </div>
+
+        <div class="tasks">
+
+          <article class="task">
+            <h3>계정 승인</h3>
+            <div class="path"><span class="seg">연차설정</span><span class="arw">›</span><span class="seg">계정 목록</span></div>
+            <ol class="steps">
+              <li><b>계정 목록</b>에서 승인대기(강조 표시)된 계정을 확인합니다.</li>
+              <li><span class="tok">승인</span>을 누르면 즉시 활성화되어 로그인할 수 있습니다.</li>
+            </ol>
+          </article>
+
+          <article class="task">
+            <h3>계정 생성</h3>
+            <div class="path"><span class="seg">연차설정</span><span class="arw">›</span><span class="seg">계정 생성</span></div>
+            <ol class="steps">
+              <li>아이디 · 이름 · 초기 비밀번호(4자 이상) · 역할 · 올해 가용연차를 입력합니다.</li>
+              <li><span class="tok">계정 생성</span>을 누르면 <b>바로 활성 상태</b>로 만들어집니다.</li>
+              <li>초기 비밀번호를 본인에게 직접 전달하세요.</li>
+            </ol>
+          </article>
+
+          <article class="task">
+            <h3>계정 상세 관리</h3>
+            <div class="path"><span class="seg">연차설정</span><span class="arw">›</span><span class="seg">(계정) 상세</span></div>
+            <dl class="facts">
+              <div>
+                <dt>계정 정보</dt>
+                <dd>이름 · 역할 · 상태(활성 / 승인대기 / 비활성)를 변경합니다.</dd>
+              </div>
+              <div>
+                <dt>비밀번호 초기화</dt>
+                <dd>새 비밀번호를 설정하고 본인에게 직접 전달합니다.</dd>
+              </div>
+              <div>
+                <dt>연차 설정</dt>
+                <dd>연도별 <b>가용연차</b>와 <b>사용 조정</b>(+/- 수동 가감)을 저장합니다. 사용연차 = 승인된 연차 · 반차 합계 + 사용 조정.</dd>
+              </div>
+              <div>
+                <dt>신청 내역</dt>
+                <dd>해당 사용자의 최근 신청 기록을 확인합니다.</dd>
+              </div>
+            </dl>
+            <div class="note warn"><b>주의</b> — 활성 마스터는 최소 1명 있어야 합니다. 마지막 마스터는 역할 변경 · 비활성이 되지 않습니다.</div>
+          </article>
+
+        </div>
+      </section>
+
+      <footer class="doc-foot">
+        <span>문의는 담당 마스터에게 요청하세요.</span>
+        <span class="mono">연차 관리 시스템 · 매뉴얼 2026-09</span>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById("themeBtn");
+    var icon = document.getElementById("themeIcon");
+    var label = document.getElementById("themeLabel");
+
+    var SUN = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>';
+    var MOON = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+
+    function stored() {
+      try { return localStorage.getItem("leave-manual-theme"); } catch (e) { return null; }
+    }
+    function systemDark() {
+      return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    function resolved() {
+      var s = root.getAttribute("data-theme");
+      if (s === "dark" || s === "light") return s;
+      return systemDark() ? "dark" : "light";
+    }
+    function render() {
+      var isDark = resolved() === "dark";
+      icon.innerHTML = isDark ? SUN : MOON;
+      label.textContent = isDark ? "밝게" : "어둡게";
+    }
+
+    var init = stored();
+    if (init === "dark" || init === "light") root.setAttribute("data-theme", init);
+    render();
+
+    btn.addEventListener("click", function () {
+      var next = resolved() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("leave-manual-theme", next); } catch (e) {}
+      render();
+    });
+
+    if (window.matchMedia) {
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+    }
+
+    // scroll-spy on the rail
+    var links = Array.prototype.slice.call(document.querySelectorAll('.rail a'));
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+    var sections = links.map(function (a) { return document.getElementById(a.getAttribute("href").slice(1)); });
+
+    if ("IntersectionObserver" in window) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            links.forEach(function (l) { l.classList.remove("active"); l.removeAttribute("aria-current"); });
+            var a = map[en.target.id];
+            if (a) { a.classList.add("active"); a.setAttribute("aria-current", "true"); }
+          }
+        });
+      }, { rootMargin: "-15% 0px -70% 0px" });
+      sections.forEach(function (s) { if (s) spy.observe(s); });
+    }
+  })();
+</script>
+
+</body>
+</html>

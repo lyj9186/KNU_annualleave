@@ -17,6 +17,8 @@
 
 ## 역할과 권한
 
+> 📘 **사용자용 매뉴얼**: [`docs/manual.html`](docs/manual.html) — 역할별 사용법을 정리한 단일 HTML 문서. 브라우저로 열거나 팀에 공유하세요.
+
 | 기능 | 사용자 | 팀장 | 마스터 |
 | --- | :---: | :---: | :---: |
 | 메인 캘린더 (연/월 드롭다운) | 전체 | 전체 | 전체 |
@@ -184,6 +186,8 @@ proxy.ts             낙관적 인증 리다이렉트 (Next 16 미들웨어)
 prisma/
   schema.prisma      데이터 모델
   seed.ts            마스터 계정 시드
+docs/
+  manual.html        역할별 사용자 매뉴얼 (단일 HTML)
 ```
 
 - **디자인 토큰**: `app/globals.css` 의 `@theme` (surface/line/text 스케일/brand). 컴포넌트·페이지는 이 토큰만 사용.
