@@ -1,6 +1,15 @@
 import type { ReactNode } from "react";
-import { Table, TBody, TD, TH, THead, TR, EmptyRow } from "@/components/ui/table";
-import { StatusBadge, TypeBadge } from "@/components/ui/badge";
+import {
+  Table,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+  EmptyRow,
+  StatusBadge,
+  TypeBadge,
+} from "@/components/ui";
 import type { RequestRow } from "@/lib/queries";
 import { daysKo, rangeKo } from "@/lib/format";
 

@@ -3,8 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { login } from "@/app/(auth)/actions";
-import { Field, Input, FormMessage } from "@/components/ui/form";
-import { SubmitButton } from "@/components/ui/submit-button";
+import { Field, Input, FormMessage, SubmitButton } from "@/components/ui";
 import type { FormState } from "@/lib/validation";
 
 const initial: FormState = {};

@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { requireMaster } from "@/lib/dal";
 import { getAllUsersForSettings } from "@/lib/queries";
-import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { Table, TBody, TD, TH, THead, TR, EmptyRow } from "@/components/ui/table";
-import { RoleBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Table,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+  EmptyRow,
+  RoleBadge,
+  Button,
+} from "@/components/ui";
 import { CreateUserForm } from "./create-user-form";
 import { approvePendingUser } from "./actions";
 import { daysNum } from "@/lib/format";

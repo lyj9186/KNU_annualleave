@@ -1,9 +1,14 @@
 /**
  * 연차 도메인 로직 (순수 함수 — 서버/클라이언트/테스트 공용)
  */
-import { LeaveStatus, LeaveType, Role } from "@/lib/generated/prisma/enums";
+import {
+  LeaveStatus,
+  LeaveType,
+  Role,
+  UserStatus,
+} from "@/lib/generated/prisma/enums";
 
-export { LeaveStatus, LeaveType, Role };
+export { LeaveStatus, LeaveType, Role, UserStatus };
 
 /** 신규 사용자에게 기본 부여되는 연차 일수 */
 export const DEFAULT_ANNUAL_DAYS = 15;
@@ -33,6 +38,12 @@ export const ROLE_LABELS: Record<Role, string> = {
   MASTER: "마스터",
   TEAM_LEAD: "팀장",
   USER: "사용자",
+};
+
+export const USER_STATUS_LABELS: Record<UserStatus, string> = {
+  PENDING: "승인대기",
+  ACTIVE: "활성",
+  DISABLED: "비활성",
 };
 
 /** 반차 여부 */

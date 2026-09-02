@@ -1,9 +1,34 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   디자인 토큰 — 기존 slate/blue 팔레트를 시맨틱 이름으로 매핑한 것.
+   색상 값은 그대로이며(팔레트 var 참조), 컴포넌트는 이 토큰만 사용한다.
+   --------------------------------------------------------------------------- */
 @theme {
   --font-sans:
     "Pretendard", "Malgun Gothic", "맑은 고딕", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+
+  /* 배경 · 면 · 경계 */
+  --color-canvas: var(--color-slate-100);
+  --color-surface: #ffffff;
+  --color-surface-muted: var(--color-slate-50);
+  --color-line: var(--color-slate-200);
+  --color-line-strong: var(--color-slate-300);
+
+  /* 텍스트 스케일 (진함 → 옅음) */
+  --color-ink: var(--color-slate-900); /* 본문 기본 · 입력값 */
+  --color-title: var(--color-slate-800); /* 제목 */
+  --color-body: var(--color-slate-700); /* 라벨 · 강조 본문 */
+  --color-subtle: var(--color-slate-600); /* 보조 텍스트 */
+  --color-muted: var(--color-slate-500); /* 설명 */
+  --color-faint: var(--color-slate-400); /* 흐린 텍스트 · placeholder */
+
+  /* 브랜드 · 강조 */
+  --color-brand: var(--color-blue-600);
+  --color-brand-hover: var(--color-blue-700);
+  --color-brand-ring: var(--color-blue-500);
+  --color-danger: var(--color-rose-600);
 }
 
 :root {
@@ -16,13 +41,13 @@ body {
 }
 
 body {
-  background-color: var(--color-slate-100);
-  color: var(--color-slate-900);
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 /* 숫자 컬럼 정렬용 */
-.tabular {
+@utility tabular {
   font-variant-numeric: tabular-nums;
 }

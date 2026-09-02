@@ -2,8 +2,14 @@
 
 import { useActionState, useState } from "react";
 import { createLeaveRequest } from "./actions";
-import { Field, Input, Select, Textarea, FormMessage } from "@/components/ui/form";
-import { SubmitButton } from "@/components/ui/submit-button";
+import {
+  Field,
+  Input,
+  Select,
+  Textarea,
+  FormMessage,
+  SubmitButton,
+} from "@/components/ui";
 import {
   LEAVE_TYPE_LABELS,
   computeLeaveDays,

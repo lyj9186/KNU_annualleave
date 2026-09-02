@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { decideLeaveRequest } from "./actions";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import type { FormState } from "@/lib/validation";
 import type { LeaveStatus } from "@/lib/leave";
 

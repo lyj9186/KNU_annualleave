@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 export function Table({ className, ...props }: ComponentProps<"table">) {
@@ -15,7 +15,7 @@ export function Table({ className, ...props }: ComponentProps<"table">) {
 export function THead({ className, ...props }: ComponentProps<"thead">) {
   return (
     <thead
-      className={cn("bg-slate-50 text-xs text-slate-500", className)}
+      className={cn("bg-surface-muted text-xs text-muted", className)}
       {...props}
     />
   );
@@ -48,14 +48,26 @@ export function TH({ className, ...props }: ComponentProps<"th">) {
 
 export function TD({ className, ...props }: ComponentProps<"td">) {
   return (
-    <td className={cn("px-3 py-2 align-middle text-slate-700", className)} {...props} />
+    <td
+      className={cn("px-3 py-2 align-middle text-body", className)}
+      {...props}
+    />
   );
 }
 
-export function EmptyRow({ colSpan, children }: { colSpan: number; children?: React.ReactNode }) {
+export function EmptyRow({
+  colSpan,
+  children,
+}: {
+  colSpan: number;
+  children?: ReactNode;
+}) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-3 py-8 text-center text-sm text-slate-400">
+      <td
+        colSpan={colSpan}
+        className="px-3 py-8 text-center text-sm text-faint"
+      >
         {children ?? "데이터가 없습니다."}
       </td>
     </tr>

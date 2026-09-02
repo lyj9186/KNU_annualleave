@@ -1,8 +1,7 @@
 import { requireUser } from "@/lib/dal";
 import { getUserRequests, getUserYearSummary } from "@/lib/queries";
-import { Card, CardBody, CardHeader } from "@/components/ui/card";
+import { Card, CardBody, CardHeader, Button } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
-import { Button } from "@/components/ui/button";
 import { LeaveForm } from "./leave-form";
 import { withdrawLeaveRequest } from "./actions";
 import { daysNum } from "@/lib/format";

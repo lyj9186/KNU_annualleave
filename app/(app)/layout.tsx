@@ -1,7 +1,7 @@
 import { requireUser } from "@/lib/dal";
 import { canApprove } from "@/lib/dal";
 import { Nav, type NavItem } from "@/components/nav";
-import { RoleBadge } from "@/components/ui/badge";
+import { RoleBadge } from "@/components/ui";
 import { logout } from "@/app/(auth)/actions";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {

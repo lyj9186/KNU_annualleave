@@ -2,9 +2,19 @@ import { requireUser } from "@/lib/dal";
 import { getMonthLeaves, getYearOverview } from "@/lib/queries";
 import { clampMonth } from "@/lib/calendar";
 import { CalendarMonth } from "@/components/calendar-month";
-import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { Table, TBody, TD, TH, THead, TR, EmptyRow } from "@/components/ui/table";
-import { RoleBadge } from "@/components/ui/badge";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Table,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
+  EmptyRow,
+  RoleBadge,
+} from "@/components/ui";
 import { daysNum } from "@/lib/format";
 import { cn } from "@/lib/cn";
 

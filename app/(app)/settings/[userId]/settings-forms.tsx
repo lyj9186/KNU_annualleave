@@ -2,8 +2,13 @@
 
 import { useActionState } from "react";
 import { resetPassword, setBalance, updateUser } from "../actions";
-import { Field, Input, Select, FormMessage } from "@/components/ui/form";
-import { SubmitButton } from "@/components/ui/submit-button";
+import {
+  Field,
+  Input,
+  Select,
+  FormMessage,
+  SubmitButton,
+} from "@/components/ui";
 import { ROLE_LABELS } from "@/lib/leave";
 import type { FormState } from "@/lib/validation";
 

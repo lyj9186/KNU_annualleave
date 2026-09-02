@@ -4,7 +4,7 @@ import {
   getRequestCounts,
   getRequestsForApproval,
 } from "@/lib/queries";
-import { Card, CardBody } from "@/components/ui/card";
+import { Card, CardBody } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
 import { DecisionForm } from "./decision-form";
 import { cn } from "@/lib/cn";
