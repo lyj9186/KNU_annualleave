@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireMaster } from "@/lib/dal";
+import { requireMaster } from "@/lib/auth/dal";
 import { getUserDetail } from "@/lib/queries";
 import { Card, CardBody, CardHeader, RoleBadge } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";

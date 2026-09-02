@@ -7,7 +7,7 @@ import {
   decryptSession,
   encryptSession,
   type SessionPayload,
-} from "@/lib/session-token";
+} from "@/lib/auth/jwt";
 
 export type { SessionPayload };
 export { COOKIE_NAME };

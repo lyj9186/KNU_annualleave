@@ -1,42 +1,11 @@
 import { z } from "zod";
 import { parseDateOnly } from "@/lib/datetime";
-
-const LOGIN_ID_RE = /^[a-zA-Z0-9._-]{3,30}$/;
-
-const loginId = z
-  .string()
-  .trim()
-  .regex(LOGIN_ID_RE, {
-    error: "아이디는 3~30자의 영문/숫자/._- 만 사용할 수 있습니다.",
-  });
-
-const name = z
-  .string()
-  .trim()
-  .min(1, { error: "이름을 입력하세요." })
-  .max(20, { error: "이름은 20자 이하로 입력하세요." });
-
-const password = z
-  .string()
-  .min(8, { error: "비밀번호는 8자 이상이어야 합니다." })
-  .max(72, { error: "비밀번호는 72자 이하로 입력하세요." });
-
-export const signupSchema = z
-  .object({
-    loginId,
-    name,
-    password,
-    confirmPassword: z.string(),
-  })
-  .refine((v) => v.password === v.confirmPassword, {
-    error: "비밀번호가 일치하지 않습니다.",
-    path: ["confirmPassword"],
-  });
-
-export const loginSchema = z.object({
-  loginId: z.string().trim().min(1, { error: "아이디를 입력하세요." }),
-  password: z.string().min(1, { error: "비밀번호를 입력하세요." }),
-});
+import {
+  leaveDaysField,
+  loginIdField,
+  nameField,
+  passwordField,
+} from "@/lib/schema";
 
 export const leaveTypeEnum = z.enum(["ANNUAL", "HALF_AM", "HALF_PM", "SICK"]);
 
@@ -88,38 +57,31 @@ export const roleEnum = z.enum(["MASTER", "TEAM_LEAD", "USER"]);
 export const userStatusEnum = z.enum(["PENDING", "ACTIVE", "DISABLED"]);
 
 export const createUserSchema = z.object({
-  loginId,
-  name,
-  password,
+  loginId: loginIdField,
+  name: nameField,
+  password: passwordField,
   role: roleEnum,
-  grantedDays: z.coerce
-    .number({ error: "숫자를 입력하세요." })
-    .min(0, { error: "0 이상이어야 합니다." })
-    .max(365),
+  grantedDays: leaveDaysField,
 });
 
 export const updateUserSchema = z.object({
   userId: z.string().min(1),
-  name,
+  name: nameField,
   role: roleEnum,
   status: userStatusEnum,
 });
 
 export const resetPasswordSchema = z.object({
   userId: z.string().min(1),
-  newPassword: password,
+  newPassword: passwordField,
 });
 
 export const setBalanceSchema = z.object({
   userId: z.string().min(1),
   year: z.coerce.number().int().min(2000).max(2100),
-  grantedDays: z.coerce
-    .number({ error: "숫자를 입력하세요." })
-    .min(0, { error: "0 이상이어야 합니다." })
-    .max(365),
+  grantedDays: leaveDaysField,
   adjustDays: z.coerce
     .number({ error: "숫자를 입력하세요." })
     .min(-365)
     .max(365),
 });
-

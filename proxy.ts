@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { COOKIE_NAME, decryptSession } from "@/lib/session-token";
+import { COOKIE_NAME, decryptSession } from "@/lib/auth/jwt";
 
 const PUBLIC_PATHS = ["/login", "/signup"];
 

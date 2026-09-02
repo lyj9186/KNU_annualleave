@@ -1,4 +1,4 @@
-import { requireUser } from "@/lib/dal";
+import { requireUser } from "@/lib/auth/dal";
 import { getMonthLeaves, getYearOverview } from "@/lib/queries";
 import { clampMonth } from "@/lib/calendar";
 import { CalendarMonth } from "@/components/calendar-month";

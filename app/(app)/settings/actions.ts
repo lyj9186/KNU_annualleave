@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { requireMaster } from "@/lib/dal";
+import { requireMaster } from "@/lib/auth/dal";
 import {
   createUserSchema,
   resetPasswordSchema,

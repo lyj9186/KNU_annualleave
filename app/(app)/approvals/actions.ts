@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { requireApprover } from "@/lib/dal";
+import { requireApprover } from "@/lib/auth/dal";
 import { decisionSchema } from "@/lib/validation";
 import type { FormState } from "@/lib/form";
 

@@ -1,8 +1,7 @@
-import { requireUser } from "@/lib/dal";
-import { canApprove } from "@/lib/dal";
+import { canApprove, requireUser } from "@/lib/auth/dal";
 import { Nav, type NavItem } from "@/components/nav";
 import { RoleBadge } from "@/components/ui";
-import { logout } from "@/app/(auth)/actions";
+import { logout } from "@/lib/auth/actions";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();

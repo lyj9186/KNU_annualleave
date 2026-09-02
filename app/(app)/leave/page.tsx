@@ -1,4 +1,4 @@
-import { requireUser } from "@/lib/dal";
+import { requireUser } from "@/lib/auth/dal";
 import { getUserRequests, getUserYearSummary } from "@/lib/queries";
 import { Card, CardBody, CardHeader, Button } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";

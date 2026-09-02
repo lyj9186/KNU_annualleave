@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireApprover } from "@/lib/dal";
+import { requireApprover } from "@/lib/auth/dal";
 import {
   getRequestCounts,
   getRequestsForApproval,

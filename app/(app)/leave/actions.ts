@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { requireUser } from "@/lib/dal";
+import { requireUser } from "@/lib/auth/dal";
 import { leaveRequestSchema, resolveEndDate } from "@/lib/validation";
 import { parseDateOnly } from "@/lib/datetime";
 import type { FormState } from "@/lib/form";

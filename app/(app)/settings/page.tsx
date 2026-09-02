@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMaster } from "@/lib/dal";
+import { requireMaster } from "@/lib/auth/dal";
 import { getAllUsersForSettings } from "@/lib/queries";
 import {
   Card,

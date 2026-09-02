@@ -1,28 +1,24 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { createSessionCookie, destroySessionCookie } from "@/lib/session";
-import { loginSchema, signupSchema } from "@/lib/validation";
-import type { FormState } from "@/lib/form";
+import { createSessionCookie, destroySessionCookie } from "@/lib/auth/session";
+import { hashPassword, verifyPassword } from "@/lib/auth/password";
+import { loginSchema, signupSchema } from "@/lib/auth/schema";
+import { fieldErrors, readForm, type FormState } from "@/lib/form";
 import { DEFAULT_ANNUAL_DAYS } from "@/lib/leave";
 
 export async function login(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const raw = {
-    loginId: String(formData.get("loginId") ?? ""),
-    password: String(formData.get("password") ?? ""),
-  };
-  const next = String(formData.get("next") ?? "") || "/main";
+  const raw = readForm(formData, "loginId", "password", "next");
+  const next = raw.next || "/main";
 
   const parsed = loginSchema.safeParse(raw);
   if (!parsed.success) {
     return {
-      errors: z.flattenError(parsed.error).fieldErrors,
+      errors: fieldErrors(parsed.error),
       values: { loginId: raw.loginId },
     };
   }
@@ -35,11 +31,10 @@ export async function login(
     message: "아이디 또는 비밀번호가 올바르지 않습니다.",
     values: { loginId: raw.loginId },
   };
-
   if (!user) return genericError;
-
-  const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
-  if (!valid) return genericError;
+  if (!(await verifyPassword(parsed.data.password, user.passwordHash))) {
+    return genericError;
+  }
 
   if (user.status === "PENDING") {
     return {
@@ -68,17 +63,18 @@ export async function signup(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const raw = {
-    loginId: String(formData.get("loginId") ?? ""),
-    name: String(formData.get("name") ?? ""),
-    password: String(formData.get("password") ?? ""),
-    confirmPassword: String(formData.get("confirmPassword") ?? ""),
-  };
+  const raw = readForm(
+    formData,
+    "loginId",
+    "name",
+    "password",
+    "confirmPassword",
+  );
 
   const parsed = signupSchema.safeParse(raw);
   if (!parsed.success) {
     return {
-      errors: z.flattenError(parsed.error).fieldErrors,
+      errors: fieldErrors(parsed.error),
       values: { loginId: raw.loginId, name: raw.name },
     };
   }
@@ -94,7 +90,7 @@ export async function signup(
     };
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+  const passwordHash = await hashPassword(parsed.data.password);
   const year = new Date().getUTCFullYear();
 
   await db.user.create({

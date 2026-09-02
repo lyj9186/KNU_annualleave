@@ -3,7 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { readSessionCookie } from "@/lib/session";
+import { readSessionCookie } from "@/lib/auth/session";
 import type { Role } from "@/lib/leave";
 
 export interface CurrentUser {
