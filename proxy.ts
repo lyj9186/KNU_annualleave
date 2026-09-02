@@ -34,6 +34,21 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/main", req.nextUrl));
   }
 
+  // 승인자(팀장·마스터) 전용 — 연차현황
+  if (
+    session &&
+    pathname.startsWith("/status") &&
+    session.role !== "MASTER" &&
+    session.role !== "TEAM_LEAD"
+  ) {
+    return NextResponse.redirect(new URL("/main", req.nextUrl));
+  }
+
+  // 마스터는 연차를 신청하지 않는다
+  if (session && pathname.startsWith("/leave") && session.role === "MASTER") {
+    return NextResponse.redirect(new URL("/main", req.nextUrl));
+  }
+
   return NextResponse.next();
 }
 

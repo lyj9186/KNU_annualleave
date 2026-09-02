@@ -61,7 +61,7 @@ export function SignupForm() {
         label="비밀번호"
         htmlFor="password"
         error={state.errors?.password}
-        hint="8자 이상"
+        hint="4자 이상"
       >
         <Input
           id="password"

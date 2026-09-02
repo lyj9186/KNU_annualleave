@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/dal";
 import { getUserRequests, getUserYearSummary } from "@/lib/leave/queries";
 import { Card, CardBody, CardHeader, Button, Stat } from "@/components/ui";
@@ -8,6 +9,7 @@ import { daysNum } from "@/lib/datetime";
 
 export default async function LeavePage() {
   const user = await requireUser();
+  if (user.role === "MASTER") redirect("/main");
   const year = new Date().getUTCFullYear();
 
   const [summary, requests] = await Promise.all([

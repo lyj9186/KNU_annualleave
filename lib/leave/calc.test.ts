@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   businessDaysBetween,
   computeLeaveDays,
+  eachBusinessDay,
   summarizeBalance,
 } from "./calc";
+import { ymd } from "@/lib/datetime";
 
 const d = (s: string) => new Date(`${s}T00:00:00.000Z`);
 
@@ -23,6 +25,28 @@ describe("businessDaysBetween", () => {
   });
   it("역전된 기간 → 0", () => {
     expect(businessDaysBetween(d("2026-03-10"), d("2026-03-01"))).toBe(0);
+  });
+});
+
+describe("eachBusinessDay", () => {
+  it("영업일만 순서대로 반환", () => {
+    // 금(3/6) ~ 화(3/10) → 금, 월, 화
+    expect(eachBusinessDay(d("2026-03-06"), d("2026-03-10")).map(ymd)).toEqual([
+      "2026-03-06",
+      "2026-03-09",
+      "2026-03-10",
+    ]);
+  });
+  it("주말만이면 빈 배열", () => {
+    expect(eachBusinessDay(d("2026-03-07"), d("2026-03-08"))).toEqual([]);
+  });
+  it("역전된 기간이면 빈 배열", () => {
+    expect(eachBusinessDay(d("2026-03-10"), d("2026-03-01"))).toEqual([]);
+  });
+  it("길이는 businessDaysBetween 과 일치", () => {
+    expect(eachBusinessDay(d("2026-03-02"), d("2026-03-20"))).toHaveLength(
+      businessDaysBetween(d("2026-03-02"), d("2026-03-20")),
+    );
   });
 });
 

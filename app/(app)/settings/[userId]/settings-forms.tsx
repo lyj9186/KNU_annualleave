@@ -77,7 +77,7 @@ export function ResetPasswordForm({ userId }: { userId: string }) {
         label="새 비밀번호"
         htmlFor="r-pw"
         error={state.errors?.newPassword}
-        hint="8자 이상 · 사용자에게 직접 전달하세요"
+        hint="4자 이상 · 사용자에게 직접 전달하세요"
       >
         <Input id="r-pw" name="newPassword" type="text" required />
       </Field>

@@ -19,11 +19,14 @@
 
 | 기능 | 사용자 | 팀장 | 마스터 |
 | --- | :---: | :---: | :---: |
-| 메인 (캘린더 · 현황표) | O | O | O |
-| 연차 등록 / 본인 신청 철회 | O | O | O |
-| 승인 / 반려 / 취소 | - | O | O |
+| 메인 캘린더 (연/월 드롭다운) | 전체 | 전체 | 전체 |
+| 메인 하단 현황표 | 본인만 | 전체 | 전체 |
+| 연차 등록 / 본인 신청 철회 | O | O | - |
+| 승인 / 반려 / 취소 (본인 신청 포함) | - | O | O |
+| 연차현황 (월별 조회 · CSV 다운로드) | - | O | O |
 | 연차설정 (계정 · 비밀번호 · 잔여) | - | - | O |
 
+- **마스터**는 연차를 사용하지 않는 결재·계정관리 전용 계정입니다 — 캘린더·현황표·연차현황·연차 등록에서 제외됩니다.
 - **회원가입**은 `승인대기(PENDING)` 상태로 생성되며, 마스터가 활성화해야 로그인할 수 있습니다.
 - **연차 종류**: 연차(−1일) · 오전 반차(−0.5일) · 오후 반차(−0.5일) · 병가(연차 미차감, 사용일수만 기록).
 - 잔여연차 = 가용연차 − (승인된 연차·반차 합계 + 마스터 수동 조정).
@@ -160,9 +163,10 @@ DATABASE_URL="<main Pooled>" DIRECT_URL="<main Direct>" npm run db:seed     # �
 app/
   (auth)/            로그인 · 회원가입 (페이지 + 클라이언트 폼)
   (app)/             인증 필요 영역 (공통 레이아웃 = 상단 네비)
-    main/            메인 — 월별 캘린더 + 연차 현황표
-    leave/           연차 등록 + 내 신청 내역
+    main/            메인 — 월별 캘린더(연/월 드롭다운) + 연차 현황표
+    leave/           연차 등록 + 내 신청 내역 (마스터 제외)
     approvals/       승인/반려/취소 (상태·종류 필터)
+    status/          연차현황 — 월별 조회 + CSV 다운로드(export/route.ts). 팀장·마스터 전용
     settings/[userId]/  연차설정 — 계정 목록 · 생성 · 상세
 lib/
   db · cn · form · schema · datetime · balance · revalidate   (공유)
@@ -172,9 +176,10 @@ lib/
   users/      schema · queries · actions
   dashboard/  queries      (메인 캘린더 · 잔여표)
   calendar/   grid          (달력 그리드 계산)
+  status/     types · expand · csv · queries   (월별 연차현황 + CSV)
 components/
   ui/         디자인 시스템 (index.ts 배럴) — Button/Field/Card/Table/Badge/Stat/ChipLink …
-  calendar-month · request-table · balance-cells · nav
+  calendar-month · month-picker · request-table · balance-cells · nav
 proxy.ts             낙관적 인증 리다이렉트 (Next 16 미들웨어)
 prisma/
   schema.prisma      데이터 모델

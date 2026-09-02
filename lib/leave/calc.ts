@@ -5,23 +5,28 @@ import { isDeductible, isHalfDay, type LeaveType } from "@/lib/leave/types";
 /** 신규 사용자에게 기본 부여되는 연차 일수 */
 export const DEFAULT_ANNUAL_DAYS = 15;
 
-function isWeekend(d: Date): boolean {
+/** 토·일 여부 (UTC 기준) */
+export function isWeekend(d: Date): boolean {
   const day = d.getUTCDay(); // 0=일 … 6=토
   return day === 0 || day === 6;
 }
 
-/** start~end(양 끝 포함) 사이의 영업일(월~금) 수 */
-export function businessDaysBetween(start: Date, end: Date): number {
+/** start~end(양 끝 포함) 사이의 영업일(월~금)을 UTC 자정 Date 배열로 */
+export function eachBusinessDay(start: Date, end: Date): Date[] {
   const s = toUtcMidnight(start);
   const e = toUtcMidnight(end);
-  if (e < s) return 0;
-  let count = 0;
+  const out: Date[] = [];
   const cur = new Date(s);
   while (cur <= e) {
-    if (!isWeekend(cur)) count += 1;
+    if (!isWeekend(cur)) out.push(new Date(cur));
     cur.setUTCDate(cur.getUTCDate() + 1);
   }
-  return count;
+  return out;
+}
+
+/** start~end(양 끝 포함) 사이의 영업일(월~금) 수 */
+export function businessDaysBetween(start: Date, end: Date): number {
+  return eachBusinessDay(start, end).length;
 }
 
 /**

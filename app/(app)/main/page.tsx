@@ -1,5 +1,7 @@
-import { requireUser } from "@/lib/auth/dal";
+import Link from "next/link";
+import { canApprove, requireUser } from "@/lib/auth/dal";
 import { getMonthLeaves, getYearOverview } from "@/lib/dashboard/queries";
+import { getPendingApprovalCount } from "@/lib/approvals/queries";
 import { clampMonth } from "@/lib/calendar/grid";
 import { CalendarMonth } from "@/components/calendar-month";
 import { BalanceCells } from "@/components/balance-cells";
@@ -28,7 +30,8 @@ export default async function MainPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  await requireUser();
+  const user = await requireUser();
+  const canSeeAll = canApprove(user.role);
   const sp = await searchParams;
   const now = new Date();
 
@@ -39,13 +42,29 @@ export default async function MainPage({
     Number.isFinite(mParam) && mParam > 0 ? mParam : now.getUTCMonth() + 1,
   );
 
-  const [leaves, overview] = await Promise.all([
+  const [leaves, overview, pendingCount] = await Promise.all([
     getMonthLeaves(y, m0),
-    getYearOverview(y),
+    getYearOverview(y, canSeeAll ? undefined : user.id),
+    canSeeAll ? getPendingApprovalCount() : Promise.resolve(0),
   ]);
 
   return (
     <div className="space-y-6">
+      {canSeeAll && pendingCount > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <span>
+            승인 대기 중인 연차 신청이 <b className="font-semibold">{pendingCount}건</b>{" "}
+            있습니다.
+          </span>
+          <Link
+            href="/approvals"
+            className="shrink-0 font-medium text-amber-900 underline underline-offset-2"
+          >
+            승인하러 가기 →
+          </Link>
+        </div>
+      ) : null}
+
       <Card>
         <CardBody>
           <CalendarMonth
@@ -59,8 +78,12 @@ export default async function MainPage({
 
       <Card>
         <CardHeader
-          title={`${y}년 연차 현황`}
-          description="가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가 미차감)"
+          title={canSeeAll ? `${y}년 연차 현황` : `${y}년 내 연차 현황`}
+          description={
+            canSeeAll
+              ? "가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가 미차감)"
+              : "본인 기준 · 가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가 미차감)"
+          }
         />
         <CardBody className="p-0">
           {overview.length === 0 ? (

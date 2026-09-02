@@ -17,9 +17,9 @@ export function ymd(d: Date): string {
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
 }
 
-/** Date → "2026.03.05 (목)" (UTC 기준) */
+/** Date → "2026-03-05 (목)" (UTC 기준) */
 export function ymdKo(d: Date): string {
-  return `${d.getUTCFullYear()}.${pad(d.getUTCMonth() + 1)}.${pad(
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
     d.getUTCDate(),
   )} (${WEEKDAYS[d.getUTCDay()]})`;
 }

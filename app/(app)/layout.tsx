@@ -1,4 +1,5 @@
 import { canApprove, requireUser } from "@/lib/auth/dal";
+import { getPendingApprovalCount } from "@/lib/approvals/queries";
 import { Nav, type NavItem } from "@/components/nav";
 import { RoleBadge } from "@/components/ui";
 import { logout } from "@/lib/auth/actions";
@@ -6,12 +7,15 @@ import { logout } from "@/lib/auth/actions";
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
 
-  const items: NavItem[] = [
-    { href: "/main", label: "메인" },
-    { href: "/leave", label: "연차 등록" },
-  ];
+  const items: NavItem[] = [{ href: "/main", label: "메인" }];
+  // 마스터는 연차를 신청하지 않는다.
+  if (user.role !== "MASTER") {
+    items.push({ href: "/leave", label: "연차 등록" });
+  }
   if (canApprove(user.role)) {
-    items.push({ href: "/approvals", label: "승인" });
+    const pending = await getPendingApprovalCount();
+    items.push({ href: "/approvals", label: "승인", badge: pending || undefined });
+    items.push({ href: "/status", label: "연차현황" });
   }
   if (user.role === "MASTER") {
     items.push({ href: "/settings", label: "연차설정" });

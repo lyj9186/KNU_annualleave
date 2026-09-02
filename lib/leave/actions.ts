@@ -14,6 +14,9 @@ export async function createLeaveRequest(
   formData: FormData,
 ): Promise<FormState> {
   const user = await requireUser();
+  if (user.role === "MASTER") {
+    return { message: "마스터 계정은 연차를 신청하지 않습니다." };
+  }
 
   const raw = readForm(formData, "type", "startDate", "endDate", "reason");
 

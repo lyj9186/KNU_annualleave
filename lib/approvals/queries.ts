@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { db } from "@/lib/db";
 import type { LeaveStatus, LeaveType } from "@/lib/leave/types";
 import {
@@ -39,3 +40,8 @@ export async function getRequestCounts(): Promise<Record<LeaveStatus, number>> {
   for (const g of grouped) base[g.status] = g._count._all;
   return base;
 }
+
+/** 승인 대기(PENDING) 신청 건수 — 팀장/마스터 알람용. 렌더 1회당 1번만 조회. */
+export const getPendingApprovalCount = cache(async (): Promise<number> => {
+  return db.leaveRequest.count({ where: { status: "PENDING" } });
+});

@@ -34,7 +34,7 @@ export function CreateUserForm() {
           label="초기 비밀번호"
           htmlFor="c-password"
           error={state.errors?.password}
-          hint="8자 이상"
+          hint="4자 이상"
         >
           <Input id="c-password" name="password" type="text" required />
         </Field>

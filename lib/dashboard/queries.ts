@@ -15,13 +15,24 @@ export interface UserBalanceRow {
   pendingDays: number;
 }
 
-/** 특정 연도의 사용자별 연차 현황 (메인 하단 표) */
-export async function getYearOverview(year: number): Promise<UserBalanceRow[]> {
+/**
+ * 특정 연도의 사용자별 연차 현황 (메인 하단 표).
+ * 마스터는 연차를 사용하지 않으므로 항상 제외한다.
+ * `onlyUserId` 를 주면 해당 사용자 1명만 (일반 사용자는 본인 현황만 조회).
+ */
+export async function getYearOverview(
+  year: number,
+  onlyUserId?: string,
+): Promise<UserBalanceRow[]> {
   const { start, end } = yearRange(year);
 
   const [users, balances, requests] = await Promise.all([
     db.user.findMany({
-      where: { status: "ACTIVE" },
+      where: {
+        status: "ACTIVE",
+        role: { not: "MASTER" },
+        ...(onlyUserId ? { id: onlyUserId } : {}),
+      },
       select: { id: true, name: true, loginId: true, role: true },
     }),
     db.leaveBalance.findMany({ where: { year } }),
@@ -83,6 +94,7 @@ export async function getMonthLeaves(
       status: { in: ["APPROVED", "PENDING"] },
       startDate: { lte: monthEnd },
       endDate: { gte: monthStart },
+      user: { role: { not: "MASTER" } },
     },
     select: {
       id: true,

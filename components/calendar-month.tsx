@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { LEAVE_TYPE_SHORT } from "@/lib/leave";
 import type { CalendarLeave } from "@/lib/dashboard/queries";
 import { WEEKDAYS, daysNum, parseDateOnly, todayIso } from "@/lib/datetime";
-import { ChipLink } from "@/components/ui";
+import { MonthPicker } from "@/components/month-picker";
 
 function isSingleDay(l: CalendarLeave): boolean {
   return l.startDate.getTime() === l.endDate.getTime();
@@ -58,8 +58,6 @@ export function CalendarMonth({
 }) {
   const weeks = buildMonthGrid(year, month0);
   const cells = weeks.flat();
-  const prev = month0 === 0 ? { y: year - 1, m: 12 } : { y: year, m: month0 };
-  const next = month0 === 11 ? { y: year + 1, m: 1 } : { y: year, m: month0 + 2 };
   const todayStr = todayIso();
 
   const leavesOn = (day: Date) =>
@@ -85,21 +83,11 @@ export function CalendarMonth({
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-base font-semibold text-title">
           {year}년 {month0 + 1}월
         </h2>
-        <div className="flex items-center gap-1">
-          <ChipLink variant="plain" href={`/main?y=${prev.y}&m=${prev.m}`}>
-            이전
-          </ChipLink>
-          <ChipLink variant="plain" href="/main">
-            이번 달
-          </ChipLink>
-          <ChipLink variant="plain" href={`/main?y=${next.y}&m=${next.m}`}>
-            다음
-          </ChipLink>
-        </div>
+        <MonthPicker basePath="/main" year={year} month0={month0} />
       </div>
 
       {/* 모바일: 미니 달력(점) + 선택한 날짜의 목록 */}

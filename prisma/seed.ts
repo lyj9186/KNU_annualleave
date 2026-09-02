@@ -38,7 +38,8 @@ async function main() {
       passwordHash,
       role: "MASTER",
       status: "ACTIVE",
-      balances: { create: { year, grantedDays: 15, adjustDays: 0 } },
+      // 마스터는 연차를 사용하지 않는다 (결재·계정관리 전용).
+      balances: { create: { year, grantedDays: 0, adjustDays: 0 } },
     },
   });
 

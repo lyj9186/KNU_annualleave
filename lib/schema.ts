@@ -18,7 +18,7 @@ export const nameField = z
 
 export const passwordField = z
   .string()
-  .min(8, { error: "비밀번호는 8자 이상이어야 합니다." })
+  .min(4, { error: "비밀번호는 4자 이상이어야 합니다." })
   .max(72, { error: "비밀번호는 72자 이하로 입력하세요." });
 
 /** 0 이상 365 이하 연차 일수 (문자열 입력 허용) */

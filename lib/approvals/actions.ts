@@ -48,10 +48,7 @@ export async function decideLeaveRequest(
   const req = await db.leaveRequest.findUnique({ where: { id: requestId } });
   if (!req) return { message: "신청을 찾을 수 없습니다." };
 
-  if (req.userId === approver.id && approver.role !== "MASTER") {
-    return { message: "본인 신청은 다른 승인자가 처리해야 합니다." };
-  }
-
+  // 팀장·마스터는 본인 신청도 직접 처리할 수 있다.
   const t = TRANSITION[action];
   if (!t.from.includes(req.status)) {
     return { message: t.denyMessage };
