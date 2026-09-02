@@ -1,5 +1,3 @@
-import "server-only";
-
 import {
   DEFAULT_ANNUAL_DAYS,
   summarizeBalance,
