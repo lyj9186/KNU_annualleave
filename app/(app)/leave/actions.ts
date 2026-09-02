@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/dal";
 import {
   leaveRequestSchema,
   parseDateOnly,
+  resolveEndDate,
   type FormState,
 } from "@/lib/validation";
 import { computeLeaveDays, isHalfDay } from "@/lib/leave";
@@ -40,7 +41,7 @@ export async function createLeaveRequest(
 
   const { type } = parsed.data;
   const startDate = parseDateOnly(parsed.data.startDate);
-  const endDate = isHalfDay(type) ? startDate : parseDateOnly(parsed.data.endDate);
+  const endDate = parseDateOnly(resolveEndDate(parsed.data));
   const days = computeLeaveDays(type, startDate, endDate);
 
   if (days <= 0) {

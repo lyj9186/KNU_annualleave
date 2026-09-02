@@ -91,7 +91,9 @@ export function LeaveForm() {
             value={effectiveEnd}
             min={start}
             onChange={(e) => setEnd(e.target.value)}
-            disabled={half}
+            readOnly={half}
+            aria-disabled={half}
+            className={half ? "bg-slate-100 text-slate-400" : undefined}
             required
           />
         </Field>

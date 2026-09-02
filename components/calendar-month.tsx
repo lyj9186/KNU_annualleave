@@ -55,6 +55,8 @@ export function CalendarMonth({
               const dayLeaves = leaves.filter((l) =>
                 coversDay(cell.date, l.startDate, l.endDate),
               );
+              const isSingleDay = (l: (typeof leaves)[number]) =>
+                l.startDate.getTime() === l.endDate.getTime();
               return (
                 <div
                   key={cell.iso}
@@ -89,9 +91,11 @@ export function CalendarMonth({
                         title={`${l.userName} · ${LEAVE_TYPE_SHORT[l.type]} ${daysNum(l.days)}일${l.status === "PENDING" ? " (대기)" : ""}`}
                       >
                         {l.userName} {LEAVE_TYPE_SHORT[l.type]}
-                        {l.type === "ANNUAL" || l.type === "SICK"
-                          ? ` ${daysNum(l.days)}`
-                          : " 0.5"}
+                        {l.type === "HALF_AM" || l.type === "HALF_PM"
+                          ? " 0.5"
+                          : isSingleDay(l)
+                            ? ` ${daysNum(l.days)}`
+                            : ""}
                         {l.status === "PENDING" ? "*" : ""}
                       </li>
                     ))}
