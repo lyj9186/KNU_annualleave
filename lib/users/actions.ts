@@ -1,20 +1,19 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { requireMaster } from "@/lib/auth/dal";
+import { hashPassword } from "@/lib/auth/password";
+import { revalidateUserViews } from "@/lib/revalidate";
+import { fieldErrors, readForm, type FormState } from "@/lib/form";
 import {
   createUserSchema,
   resetPasswordSchema,
   setBalanceSchema,
   updateUserSchema,
-} from "@/lib/validation";
-import type { FormState } from "@/lib/form";
+} from "@/lib/users/schema";
 
-async function activeMasterCount(): Promise<number> {
+function activeMasterCount(): Promise<number> {
   return db.user.count({ where: { role: "MASTER", status: "ACTIVE" } });
 }
 
@@ -25,19 +24,14 @@ export async function createUser(
   await requireMaster();
 
   const raw = {
-    loginId: String(formData.get("loginId") ?? ""),
-    name: String(formData.get("name") ?? ""),
-    password: String(formData.get("password") ?? ""),
+    ...readForm(formData, "loginId", "name", "password"),
     role: String(formData.get("role") ?? "USER"),
     grantedDays: String(formData.get("grantedDays") ?? "0"),
   };
 
   const parsed = createUserSchema.safeParse(raw);
   if (!parsed.success) {
-    return {
-      errors: z.flattenError(parsed.error).fieldErrors,
-      values: raw,
-    };
+    return { errors: fieldErrors(parsed.error), values: raw };
   }
 
   const exists = await db.user.findUnique({
@@ -45,20 +39,15 @@ export async function createUser(
     select: { id: true },
   });
   if (exists) {
-    return {
-      errors: { loginId: ["이미 사용 중인 아이디입니다."] },
-      values: raw,
-    };
+    return { errors: { loginId: ["이미 사용 중인 아이디입니다."] }, values: raw };
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
   const year = new Date().getUTCFullYear();
-
   await db.user.create({
     data: {
       loginId: parsed.data.loginId,
       name: parsed.data.name,
-      passwordHash,
+      passwordHash: await hashPassword(parsed.data.password),
       role: parsed.data.role,
       status: "ACTIVE",
       balances: {
@@ -67,8 +56,7 @@ export async function createUser(
     },
   });
 
-  revalidatePath("/settings");
-  revalidatePath("/main");
+  revalidateUserViews();
   return { ok: true, message: `${parsed.data.name} 계정을 생성했습니다.` };
 }
 
@@ -78,14 +66,11 @@ export async function updateUser(
 ): Promise<FormState> {
   await requireMaster();
 
-  const parsed = updateUserSchema.safeParse({
-    userId: String(formData.get("userId") ?? ""),
-    name: String(formData.get("name") ?? ""),
-    role: String(formData.get("role") ?? ""),
-    status: String(formData.get("status") ?? ""),
-  });
+  const parsed = updateUserSchema.safeParse(
+    readForm(formData, "userId", "name", "role", "status"),
+  );
   if (!parsed.success) {
-    return { errors: z.flattenError(parsed.error).fieldErrors };
+    return { errors: fieldErrors(parsed.error) };
   }
 
   const target = await db.user.findUnique({ where: { id: parsed.data.userId } });
@@ -108,9 +93,7 @@ export async function updateUser(
     },
   });
 
-  revalidatePath("/settings");
-  revalidatePath(`/settings/${parsed.data.userId}`);
-  revalidatePath("/main");
+  revalidateUserViews(parsed.data.userId);
   return { ok: true, message: "계정 정보를 저장했습니다." };
 }
 
@@ -120,18 +103,16 @@ export async function resetPassword(
 ): Promise<FormState> {
   await requireMaster();
 
-  const parsed = resetPasswordSchema.safeParse({
-    userId: String(formData.get("userId") ?? ""),
-    newPassword: String(formData.get("newPassword") ?? ""),
-  });
+  const parsed = resetPasswordSchema.safeParse(
+    readForm(formData, "userId", "newPassword"),
+  );
   if (!parsed.success) {
-    return { errors: z.flattenError(parsed.error).fieldErrors };
+    return { errors: fieldErrors(parsed.error) };
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.newPassword, 10);
   await db.user.update({
     where: { id: parsed.data.userId },
-    data: { passwordHash },
+    data: { passwordHash: await hashPassword(parsed.data.newPassword) },
   });
 
   return { ok: true, message: "비밀번호를 초기화했습니다." };
@@ -144,13 +125,11 @@ export async function setBalance(
   await requireMaster();
 
   const parsed = setBalanceSchema.safeParse({
-    userId: String(formData.get("userId") ?? ""),
-    year: String(formData.get("year") ?? ""),
-    grantedDays: String(formData.get("grantedDays") ?? ""),
+    ...readForm(formData, "userId", "year", "grantedDays"),
     adjustDays: String(formData.get("adjustDays") ?? "0"),
   });
   if (!parsed.success) {
-    return { errors: z.flattenError(parsed.error).fieldErrors };
+    return { errors: fieldErrors(parsed.error) };
   }
 
   const { userId, year, grantedDays, adjustDays } = parsed.data;
@@ -160,21 +139,20 @@ export async function setBalance(
     update: { grantedDays, adjustDays },
   });
 
-  revalidatePath("/settings");
-  revalidatePath(`/settings/${userId}`);
-  revalidatePath("/main");
+  revalidateUserViews(userId);
   return { ok: true, message: `${year}년 연차를 저장했습니다.` };
 }
 
 export async function approvePendingUser(formData: FormData): Promise<void> {
   await requireMaster();
-  const userId = String(formData.get("userId") ?? "");
+  const { userId } = readForm(formData, "userId");
   if (!userId) return;
+
   await db.user.updateMany({
     where: { id: userId, status: "PENDING" },
     data: { status: "ACTIVE" },
   });
-  revalidatePath("/settings");
-  revalidatePath("/main");
+
+  revalidateUserViews();
   redirect(`/settings/${userId}`);
 }

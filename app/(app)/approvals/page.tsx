@@ -3,7 +3,7 @@ import { requireApprover } from "@/lib/auth/dal";
 import {
   getRequestCounts,
   getRequestsForApproval,
-} from "@/lib/queries";
+} from "@/lib/approvals/queries";
 import { Card, CardBody } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
 import { DecisionForm } from "./decision-form";

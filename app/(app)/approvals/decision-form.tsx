@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { decideLeaveRequest } from "./actions";
+import { decideLeaveRequest } from "@/lib/approvals/actions";
 import { Button } from "@/components/ui";
 import type { FormState } from "@/lib/form";
 import type { LeaveStatus } from "@/lib/leave";

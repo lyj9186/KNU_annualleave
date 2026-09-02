@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { buildMonthGrid, coversDay } from "@/lib/calendar";
+import { buildMonthGrid, coversDay } from "@/lib/calendar/grid";
 import { cn } from "@/lib/cn";
 import { LEAVE_TYPE_SHORT } from "@/lib/leave";
-import type { CalendarLeave } from "@/lib/queries";
+import type { CalendarLeave } from "@/lib/dashboard/queries";
 import { WEEKDAYS, daysNum, todayIso } from "@/lib/datetime";
 
 export function CalendarMonth({

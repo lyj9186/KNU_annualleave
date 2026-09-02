@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createLeaveRequest } from "./actions";
+import { createLeaveRequest } from "@/lib/leave/actions";
 import {
   Field,
   Input,

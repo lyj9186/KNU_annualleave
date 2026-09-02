@@ -1,9 +1,9 @@
 import { requireUser } from "@/lib/auth/dal";
-import { getUserRequests, getUserYearSummary } from "@/lib/queries";
+import { getUserRequests, getUserYearSummary } from "@/lib/leave/queries";
 import { Card, CardBody, CardHeader, Button } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
 import { LeaveForm } from "./leave-form";
-import { withdrawLeaveRequest } from "./actions";
+import { withdrawLeaveRequest } from "@/lib/leave/actions";
 import { daysNum } from "@/lib/datetime";
 
 export default async function LeavePage() {

@@ -1,19 +1,13 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth/dal";
-import { leaveRequestSchema, resolveEndDate } from "@/lib/validation";
+import { revalidateLeaveViews } from "@/lib/revalidate";
+import { leaveRequestSchema, resolveEndDate } from "@/lib/leave/schema";
+import { computeLeaveDays } from "@/lib/leave/calc";
+import { isHalfDay } from "@/lib/leave/types";
 import { parseDateOnly } from "@/lib/datetime";
-import type { FormState } from "@/lib/form";
-import { computeLeaveDays, isHalfDay } from "@/lib/leave";
-
-function revalidateAll() {
-  revalidatePath("/leave");
-  revalidatePath("/main");
-  revalidatePath("/approvals");
-}
+import { fieldErrors, readForm, type FormState } from "@/lib/form";
 
 export async function createLeaveRequest(
   _prev: FormState,
@@ -21,19 +15,11 @@ export async function createLeaveRequest(
 ): Promise<FormState> {
   const user = await requireUser();
 
-  const raw = {
-    type: String(formData.get("type") ?? ""),
-    startDate: String(formData.get("startDate") ?? ""),
-    endDate: String(formData.get("endDate") ?? ""),
-    reason: String(formData.get("reason") ?? ""),
-  };
+  const raw = readForm(formData, "type", "startDate", "endDate", "reason");
 
   const parsed = leaveRequestSchema.safeParse(raw);
   if (!parsed.success) {
-    return {
-      errors: z.flattenError(parsed.error).fieldErrors,
-      values: raw,
-    };
+    return { errors: fieldErrors(parsed.error), values: raw };
   }
 
   const { type } = parsed.data;
@@ -91,13 +77,13 @@ export async function createLeaveRequest(
     },
   });
 
-  revalidateAll();
+  revalidateLeaveViews();
   return { ok: true, message: "연차를 신청했습니다. 팀장 승인을 기다려 주세요." };
 }
 
 export async function withdrawLeaveRequest(formData: FormData): Promise<void> {
   const user = await requireUser();
-  const requestId = String(formData.get("requestId") ?? "");
+  const { requestId } = readForm(formData, "requestId");
   if (!requestId) return;
 
   const req = await db.leaveRequest.findUnique({ where: { id: requestId } });
@@ -113,5 +99,5 @@ export async function withdrawLeaveRequest(formData: FormData): Promise<void> {
     },
   });
 
-  revalidateAll();
+  revalidateLeaveViews();
 }

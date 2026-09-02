@@ -1,61 +1,9 @@
-/**
- * 연차 도메인 로직 (순수 함수 — 서버/클라이언트/테스트 공용)
- */
-import {
-  LeaveStatus,
-  LeaveType,
-  Role,
-  UserStatus,
-} from "@/lib/generated/prisma/enums";
+/** 연차 계산 (순수 함수 — 서버/클라이언트/테스트 공용) */
 import { toUtcMidnight } from "@/lib/datetime";
-
-export { LeaveStatus, LeaveType, Role, UserStatus };
+import { isDeductible, isHalfDay, type LeaveType } from "@/lib/leave/types";
 
 /** 신규 사용자에게 기본 부여되는 연차 일수 */
 export const DEFAULT_ANNUAL_DAYS = 15;
-
-export const LEAVE_TYPE_LABELS: Record<LeaveType, string> = {
-  ANNUAL: "연차",
-  HALF_AM: "오전 반차",
-  HALF_PM: "오후 반차",
-  SICK: "병가",
-};
-
-export const LEAVE_TYPE_SHORT: Record<LeaveType, string> = {
-  ANNUAL: "연차",
-  HALF_AM: "오전반차",
-  HALF_PM: "오후반차",
-  SICK: "병가",
-};
-
-export const LEAVE_STATUS_LABELS: Record<LeaveStatus, string> = {
-  PENDING: "대기",
-  APPROVED: "승인",
-  REJECTED: "반려",
-  CANCELLED: "취소",
-};
-
-export const ROLE_LABELS: Record<Role, string> = {
-  MASTER: "마스터",
-  TEAM_LEAD: "팀장",
-  USER: "사용자",
-};
-
-export const USER_STATUS_LABELS: Record<UserStatus, string> = {
-  PENDING: "승인대기",
-  ACTIVE: "활성",
-  DISABLED: "비활성",
-};
-
-/** 반차 여부 */
-export function isHalfDay(type: LeaveType): boolean {
-  return type === "HALF_AM" || type === "HALF_PM";
-}
-
-/** 연차에서 차감되는 종류인지 (병가는 차감하지 않음) */
-export function isDeductible(type: LeaveType): boolean {
-  return type !== "SICK";
-}
 
 function isWeekend(d: Date): boolean {
   const day = d.getUTCDay(); // 0=일 … 6=토

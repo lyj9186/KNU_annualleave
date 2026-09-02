@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireMaster } from "@/lib/auth/dal";
-import { getAllUsersForSettings } from "@/lib/queries";
+import { getAllUsersForSettings } from "@/lib/users/queries";
 import {
   Card,
   CardBody,
@@ -16,7 +16,7 @@ import {
   Button,
 } from "@/components/ui";
 import { CreateUserForm } from "./create-user-form";
-import { approvePendingUser } from "./actions";
+import { approvePendingUser } from "@/lib/users/actions";
 import { daysNum } from "@/lib/datetime";
 import { cn } from "@/lib/cn";
 

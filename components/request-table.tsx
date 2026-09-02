@@ -10,7 +10,7 @@ import {
   StatusBadge,
   TypeBadge,
 } from "@/components/ui";
-import type { RequestRow } from "@/lib/queries";
+import type { RequestRow } from "@/lib/leave/request";
 import { daysKo, rangeKo } from "@/lib/datetime";
 
 export function RequestTable({

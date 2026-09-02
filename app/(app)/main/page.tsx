@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth/dal";
-import { getMonthLeaves, getYearOverview } from "@/lib/queries";
-import { clampMonth } from "@/lib/calendar";
+import { getMonthLeaves, getYearOverview } from "@/lib/dashboard/queries";
+import { clampMonth } from "@/lib/calendar/grid";
 import { CalendarMonth } from "@/components/calendar-month";
 import {
   Card,

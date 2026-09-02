@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { resetPassword, setBalance, updateUser } from "../actions";
+import { resetPassword, setBalance, updateUser } from "@/lib/users/actions";
 import {
   Field,
   Input,

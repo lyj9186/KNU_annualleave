@@ -3,7 +3,7 @@ import {
   businessDaysBetween,
   computeLeaveDays,
   summarizeBalance,
-} from "./leave";
+} from "./calc";
 
 const d = (s: string) => new Date(`${s}T00:00:00.000Z`);
 
