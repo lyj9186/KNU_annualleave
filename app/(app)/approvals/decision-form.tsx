@@ -24,15 +24,18 @@ export function DecisionForm({
   }
 
   return (
-    <form action={action} className="flex flex-col items-end gap-1">
+    <form
+      action={action}
+      className="flex flex-col items-stretch gap-1.5 sm:items-end"
+    >
       <input type="hidden" name="requestId" value={requestId} />
       <input
         name="note"
         placeholder="메모(선택)"
         maxLength={200}
-        className="h-7 w-32 rounded border border-line-strong px-2 text-xs focus:border-brand-ring focus:outline-none"
+        className="h-8 w-full rounded border border-line-strong px-2 text-xs focus:border-brand-ring focus:outline-none sm:h-7 sm:w-40"
       />
-      <div className="flex gap-1">
+      <div className="flex gap-1 sm:justify-end">
         {status === "PENDING" ? (
           <>
             <Button

@@ -40,7 +40,7 @@ export function UserEditForm({
       <Field label="이름" htmlFor="e-name" error={state.errors?.name}>
         <Input id="e-name" name="name" defaultValue={name} required />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="역할" htmlFor="e-role" error={state.errors?.role}>
           <Select id="e-role" name="role" defaultValue={role}>
             {ROLE_OPTIONS.map((r) => (
@@ -107,7 +107,7 @@ export function BalanceForm({
         <FormMessage ok={state.ok}>{state.message}</FormMessage>
       ) : null}
       <input type="hidden" name="userId" value={userId} />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Field label="연도" htmlFor="b-year" error={state.errors?.year}>
           <Select id="b-year" name="year" defaultValue={String(year)}>
             {years.map((y) => (

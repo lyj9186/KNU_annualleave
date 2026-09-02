@@ -5,10 +5,10 @@ import { cn } from "@/lib/cn";
 export type ChipVariant = "tab" | "filter" | "plain";
 
 const SHAPE: Record<ChipVariant, string> = {
-  tab: "rounded-md px-3 py-1.5 text-sm font-medium",
-  filter: "rounded-full px-2.5 py-1",
+  tab: "rounded-md px-3 py-2 text-sm font-medium sm:py-1.5",
+  filter: "rounded-full px-3 py-1.5 text-sm sm:px-2.5 sm:py-1 sm:text-xs",
   plain:
-    "rounded-md border border-line-strong bg-surface px-2.5 py-1 text-xs text-subtle hover:bg-surface-muted",
+    "rounded-md border border-line-strong bg-surface px-2.5 py-1.5 text-xs text-subtle hover:bg-surface-muted sm:py-1",
 };
 
 const ACTIVE: Record<"tab" | "filter", string> = {

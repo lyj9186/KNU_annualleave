@@ -1,9 +1,13 @@
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
+/**
+ * 데스크톱(`lg` 이상) 전용 데이터 테이블.
+ * 좁은 화면에서는 숨겨지므로, 호출부는 `<RecordList>` 로 모바일 대체 뷰를 함께 제공한다.
+ */
 export function Table({ className, ...props }: ComponentProps<"table">) {
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="hidden w-full overflow-x-auto lg:block">
       <table
         className={cn("w-full border-collapse text-sm", className)}
         {...props}

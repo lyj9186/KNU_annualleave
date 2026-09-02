@@ -25,3 +25,4 @@ export {
 } from "./badge";
 export { Stat } from "./stat";
 export { ChipLink, type ChipVariant } from "./chip-link";
+export { RecordList, RecordEmpty, RecordCard, RecordRow } from "./record";

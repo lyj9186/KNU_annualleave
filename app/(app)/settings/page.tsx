@@ -15,11 +15,36 @@ import {
   RoleBadge,
   UserStatusText,
   Button,
+  RecordList,
+  RecordEmpty,
+  RecordCard,
+  RecordRow,
 } from "@/components/ui";
 import { BalanceCells } from "@/components/balance-cells";
 import { CreateUserForm } from "./create-user-form";
 import { approvePendingUser } from "@/lib/users/actions";
+import { daysNum } from "@/lib/datetime";
 import { cn } from "@/lib/cn";
+
+function RowActions({ id, pending }: { id: string; pending: boolean }) {
+  return (
+    <div className="flex justify-end gap-1">
+      {pending ? (
+        <form action={approvePendingUser}>
+          <input type="hidden" name="userId" value={id} />
+          <Button type="submit" size="sm" variant="success">
+            승인
+          </Button>
+        </form>
+      ) : null}
+      <Link href={`/settings/${id}`}>
+        <Button size="sm" variant="outline">
+          상세
+        </Button>
+      </Link>
+    </div>
+  );
+}
 
 export default async function SettingsPage() {
   await requireMaster();
@@ -39,6 +64,41 @@ export default async function SettingsPage() {
           }
         />
         <CardBody className="p-0">
+          {users.length === 0 ? (
+            <RecordEmpty />
+          ) : (
+            <RecordList>
+              {users.map((u) => (
+                <RecordCard
+                  key={u.id}
+                  className={cn(u.status === "PENDING" && "bg-amber-50")}
+                  title={u.name}
+                  aside={<RoleBadge role={u.role} />}
+                  footer={<RowActions id={u.id} pending={u.status === "PENDING"} />}
+                >
+                  <RecordRow label="아이디">{u.loginId}</RecordRow>
+                  <RecordRow label="상태">
+                    <UserStatusText status={u.status} />
+                  </RecordRow>
+                  <RecordRow label="가용 · 사용 · 잔여">
+                    <span className="tabular">
+                      {daysNum(u.summary.granted)} · {daysNum(u.summary.used)} ·{" "}
+                      <span
+                        className={cn(
+                          "font-semibold",
+                          u.summary.remaining < 0
+                            ? "text-danger"
+                            : "text-title",
+                        )}
+                      >
+                        {daysNum(u.summary.remaining)}
+                      </span>
+                    </span>
+                  </RecordRow>
+                </RecordCard>
+              ))}
+            </RecordList>
+          )}
           <Table>
             <THead>
               <TR>
@@ -71,21 +131,7 @@ export default async function SettingsPage() {
                     </TD>
                     <BalanceCells summary={u.summary} />
                     <TD className="text-right">
-                      <div className="flex justify-end gap-1">
-                        {u.status === "PENDING" ? (
-                          <form action={approvePendingUser}>
-                            <input type="hidden" name="userId" value={u.id} />
-                            <Button type="submit" size="sm" variant="success">
-                              승인
-                            </Button>
-                          </form>
-                        ) : null}
-                        <Link href={`/settings/${u.id}`}>
-                          <Button size="sm" variant="outline">
-                            상세
-                          </Button>
-                        </Link>
-                      </div>
+                      <RowActions id={u.id} pending={u.status === "PENDING"} />
                     </TD>
                   </TR>
                 ))

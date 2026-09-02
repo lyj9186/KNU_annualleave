@@ -15,7 +15,12 @@ import {
   TR,
   EmptyRow,
   RoleBadge,
+  RecordList,
+  RecordEmpty,
+  RecordCard,
+  RecordRow,
 } from "@/components/ui";
+import { cn } from "@/lib/cn";
 import { daysNum } from "@/lib/datetime";
 
 export default async function MainPage({
@@ -43,7 +48,12 @@ export default async function MainPage({
     <div className="space-y-6">
       <Card>
         <CardBody>
-          <CalendarMonth year={y} month0={m0} leaves={leaves} />
+          <CalendarMonth
+            key={`${y}-${m0}`}
+            year={y}
+            month0={m0}
+            leaves={leaves}
+          />
         </CardBody>
       </Card>
 
@@ -53,6 +63,64 @@ export default async function MainPage({
           description="가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가 미차감)"
         />
         <CardBody className="p-0">
+          {overview.length === 0 ? (
+            <RecordEmpty />
+          ) : (
+            <RecordList>
+              {overview.map((row) => (
+                <RecordCard
+                  key={row.userId}
+                  title={row.name}
+                  aside={<RoleBadge role={row.role} />}
+                >
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    {(
+                      [
+                        ["가용", daysNum(row.summary.granted), "text-title"],
+                        ["사용", daysNum(row.summary.used), "text-title"],
+                        [
+                          "잔여",
+                          daysNum(row.summary.remaining),
+                          row.summary.remaining < 0
+                            ? "text-danger"
+                            : "text-title",
+                        ],
+                      ] as const
+                    ).map(([label, value, tone]) => (
+                      <div
+                        key={label}
+                        className="rounded-md bg-surface-muted py-1.5"
+                      >
+                        <dt className="text-xs text-muted">{label}</dt>
+                        <dd
+                          className={cn(
+                            "tabular mt-0.5 text-sm font-semibold",
+                            tone,
+                          )}
+                        >
+                          {value}
+                        </dd>
+                      </div>
+                    ))}
+                  </div>
+                  {row.pendingDays > 0 ? (
+                    <RecordRow label="승인대기">
+                      <span className="tabular text-amber-600">
+                        {daysNum(row.pendingDays)}
+                      </span>
+                    </RecordRow>
+                  ) : null}
+                  {row.summary.sickUsed > 0 ? (
+                    <RecordRow label="병가사용">
+                      <span className="tabular">
+                        {daysNum(row.summary.sickUsed)}
+                      </span>
+                    </RecordRow>
+                  ) : null}
+                </RecordCard>
+              ))}
+            </RecordList>
+          )}
           <Table>
             <THead>
               <TR>

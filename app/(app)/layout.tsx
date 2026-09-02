@@ -11,7 +11,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
     { href: "/leave", label: "연차 등록" },
   ];
   if (canApprove(user.role)) {
-    items.push({ href: "/approvals", label: "승인/반려/취소" });
+    items.push({ href: "/approvals", label: "승인" });
   }
   if (user.role === "MASTER") {
     items.push({ href: "/settings", label: "연차설정" });
@@ -20,14 +20,16 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="min-h-full">
       <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2.5">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-bold text-title">연차 관리</span>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1.5 px-4 py-2 sm:py-2.5">
+          <span className="shrink-0 text-sm font-bold text-title">연차 관리</span>
+          <div className="order-last w-full sm:order-none sm:w-auto">
             <Nav items={items} />
           </div>
-          <div className="flex items-center gap-2 text-sm text-subtle">
+          <div className="ml-auto flex items-center gap-2 text-sm text-subtle">
             <RoleBadge role={user.role} />
-            <span className="font-medium text-title">{user.name}</span>
+            <span className="max-w-[7rem] truncate font-medium text-title">
+              {user.name}
+            </span>
             <form action={logout}>
               <button
                 type="submit"

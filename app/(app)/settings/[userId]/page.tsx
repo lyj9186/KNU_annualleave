@@ -28,13 +28,13 @@ export default async function UserDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <Link href="/settings" className="text-sm text-brand hover:underline">
           ← 목록
         </Link>
         <h1 className="text-lg font-bold text-title">{user.name}</h1>
         <RoleBadge role={user.role} />
-        <span className="text-sm text-faint">
+        <span className="w-full text-sm text-faint sm:w-auto">
           {user.loginId} · 가입 {ymdKo(user.createdAt)}
         </span>
       </div>
