@@ -3,9 +3,7 @@ import { buildMonthGrid, coversDay } from "@/lib/calendar";
 import { cn } from "@/lib/cn";
 import { LEAVE_TYPE_SHORT } from "@/lib/leave";
 import type { CalendarLeave } from "@/lib/queries";
-import { daysNum } from "@/lib/format";
-
-const WEEKDAY_HEADERS = ["일", "월", "화", "수", "목", "금", "토"];
+import { WEEKDAYS, daysNum, todayIso } from "@/lib/datetime";
 
 export function CalendarMonth({
   year,
@@ -19,8 +17,7 @@ export function CalendarMonth({
   const weeks = buildMonthGrid(year, month0);
   const prev = month0 === 0 ? { y: year - 1, m: 12 } : { y: year, m: month0 };
   const next = month0 === 11 ? { y: year + 1, m: 1 } : { y: year, m: month0 + 2 };
-  const today = new Date();
-  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const todayStr = todayIso();
 
   return (
     <div>
@@ -38,7 +35,7 @@ export function CalendarMonth({
       <div className="overflow-x-auto">
         <div className="min-w-[720px]">
           <div className="grid grid-cols-7 border-l border-t border-slate-200 text-xs">
-            {WEEKDAY_HEADERS.map((w, i) => (
+            {WEEKDAYS.map((w, i) => (
               <div
                 key={w}
                 className={cn(
@@ -63,7 +60,7 @@ export function CalendarMonth({
                   className={cn(
                     "min-h-[92px] border-r border-b border-slate-200 p-1",
                     !cell.inMonth && "bg-slate-50/60",
-                    cell.iso === todayIso && "bg-blue-50",
+                    cell.iso === todayStr && "bg-blue-50",
                   )}
                 >
                   <div

@@ -7,6 +7,7 @@ import {
   Role,
   UserStatus,
 } from "@/lib/generated/prisma/enums";
+import { toUtcMidnight } from "@/lib/datetime";
 
 export { LeaveStatus, LeaveType, Role, UserStatus };
 
@@ -56,13 +57,8 @@ export function isDeductible(type: LeaveType): boolean {
   return type !== "SICK";
 }
 
-/** UTC 기준 요일 (0=일 … 6=토) */
-function utcDay(d: Date): number {
-  return d.getUTCDay();
-}
-
 function isWeekend(d: Date): boolean {
-  const day = utcDay(d);
+  const day = d.getUTCDay(); // 0=일 … 6=토
   return day === 0 || day === 6;
 }
 
@@ -78,11 +74,6 @@ export function businessDaysBetween(start: Date, end: Date): number {
     cur.setUTCDate(cur.getUTCDate() + 1);
   }
   return count;
-}
-
-/** 시분초를 버리고 UTC 자정으로 정규화 */
-export function toUtcMidnight(d: Date): Date {
-  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
 }
 
 /**
@@ -137,9 +128,4 @@ export function summarizeBalance(input: BalanceInput): BalanceSummary {
 /** 소수 둘째 자리 반올림 (0.5 단위 연차 오차 방지) */
 export function round2(n: number): number {
   return Math.round((n + Number.EPSILON) * 100) / 100;
-}
-
-/** 신청이 특정 연도에 속하는지 (시작일 기준) */
-export function leaveYear(startDate: Date): number {
-  return startDate.getUTCFullYear();
 }

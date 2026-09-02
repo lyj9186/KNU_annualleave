@@ -17,7 +17,7 @@ import {
 } from "@/components/ui";
 import { CreateUserForm } from "./create-user-form";
 import { approvePendingUser } from "./actions";
-import { daysNum } from "@/lib/format";
+import { daysNum } from "@/lib/datetime";
 import { cn } from "@/lib/cn";
 
 const STATUS_LABEL = {

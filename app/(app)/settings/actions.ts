@@ -11,8 +11,8 @@ import {
   resetPasswordSchema,
   setBalanceSchema,
   updateUserSchema,
-  type FormState,
 } from "@/lib/validation";
+import type { FormState } from "@/lib/form";
 
 async function activeMasterCount(): Promise<number> {
   return db.user.count({ where: { role: "MASTER", status: "ACTIVE" } });

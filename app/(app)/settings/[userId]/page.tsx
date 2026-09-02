@@ -5,7 +5,7 @@ import { getUserDetail } from "@/lib/queries";
 import { Card, CardBody, CardHeader, RoleBadge } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
 import { DEFAULT_ANNUAL_DAYS } from "@/lib/leave";
-import { ymdKo } from "@/lib/format";
+import { ymdKo } from "@/lib/datetime";
 import {
   BalanceForm,
   ResetPasswordForm,

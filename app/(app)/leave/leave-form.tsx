@@ -16,17 +16,11 @@ import {
   isHalfDay,
   type LeaveType,
 } from "@/lib/leave";
-import { parseDateOnly } from "@/lib/validation";
-import { daysKo } from "@/lib/format";
-import type { FormState } from "@/lib/validation";
+import { daysKo, parseDateOnly, todayIso } from "@/lib/datetime";
+import type { FormState } from "@/lib/form";
 
 const initial: FormState = {};
 const TYPES: LeaveType[] = ["ANNUAL", "HALF_AM", "HALF_PM", "SICK"];
-
-function todayIso(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
 
 export function LeaveForm() {
   const [state, action] = useActionState(createLeaveRequest, initial);

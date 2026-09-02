@@ -1,11 +1,7 @@
 import { z } from "zod";
+import { parseDateOnly } from "@/lib/datetime";
 
-export const LOGIN_ID_RE = /^[a-zA-Z0-9._-]{3,30}$/;
-
-/** "YYYY-MM-DD" 문자열 → UTC 자정 Date */
-export function parseDateOnly(value: string): Date {
-  return new Date(`${value}T00:00:00.000Z`);
-}
+const LOGIN_ID_RE = /^[a-zA-Z0-9._-]{3,30}$/;
 
 const loginId = z
   .string()
@@ -127,11 +123,3 @@ export const setBalanceSchema = z.object({
     .max(365),
 });
 
-export type FieldErrors = Record<string, string[] | undefined>;
-
-export interface FormState {
-  ok?: boolean;
-  message?: string;
-  errors?: FieldErrors;
-  values?: Record<string, string>;
-}

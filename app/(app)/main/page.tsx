@@ -15,7 +15,7 @@ import {
   EmptyRow,
   RoleBadge,
 } from "@/components/ui";
-import { daysNum } from "@/lib/format";
+import { daysNum } from "@/lib/datetime";
 import { cn } from "@/lib/cn";
 
 export default async function MainPage({

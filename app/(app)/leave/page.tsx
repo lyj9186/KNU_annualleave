@@ -4,7 +4,7 @@ import { Card, CardBody, CardHeader, Button } from "@/components/ui";
 import { RequestTable } from "@/components/request-table";
 import { LeaveForm } from "./leave-form";
 import { withdrawLeaveRequest } from "./actions";
-import { daysNum } from "@/lib/format";
+import { daysNum } from "@/lib/datetime";
 
 export default async function LeavePage() {
   const user = await requireUser();

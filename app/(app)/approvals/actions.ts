@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireApprover } from "@/lib/dal";
-import { decisionSchema, type FormState } from "@/lib/validation";
+import { decisionSchema } from "@/lib/validation";
+import type { FormState } from "@/lib/form";
 
 export async function decideLeaveRequest(
   _prev: FormState,

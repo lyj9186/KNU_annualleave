@@ -10,7 +10,7 @@ import {
   SubmitButton,
 } from "@/components/ui";
 import { DEFAULT_ANNUAL_DAYS, ROLE_LABELS } from "@/lib/leave";
-import type { FormState } from "@/lib/validation";
+import type { FormState } from "@/lib/form";
 
 const initial: FormState = {};
 

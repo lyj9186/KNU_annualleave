@@ -8,15 +8,10 @@ import {
   type LeaveStatus,
   type LeaveType,
 } from "@/lib/leave";
+import { yearRange } from "@/lib/datetime";
+import { buildBalancesByUser } from "@/lib/balance";
 
 const ROLE_ORDER = { MASTER: 0, TEAM_LEAD: 1, USER: 2 } as const;
-
-export function yearRange(year: number): { start: Date; end: Date } {
-  return {
-    start: new Date(Date.UTC(year, 0, 1)),
-    end: new Date(Date.UTC(year + 1, 0, 1)),
-  };
-}
 
 export interface UserBalanceRow {
   userId: string;
@@ -46,34 +41,22 @@ export async function getYearOverview(year: number): Promise<UserBalanceRow[]> {
     }),
   ]);
 
-  const balanceByUser = new Map(balances.map((b) => [b.userId, b]));
-  const approvedByUser = new Map<string, { type: LeaveType; days: number }[]>();
-  const pendingByUser = new Map<string, number>();
-
-  for (const r of requests) {
-    if (r.status === "APPROVED") {
-      const arr = approvedByUser.get(r.userId) ?? [];
-      arr.push({ type: r.type, days: r.days });
-      approvedByUser.set(r.userId, arr);
-    } else if (r.status === "PENDING" && r.type !== "SICK") {
-      pendingByUser.set(r.userId, (pendingByUser.get(r.userId) ?? 0) + r.days);
-    }
-  }
+  const byUser = buildBalancesByUser(
+    users.map((u) => u.id),
+    balances,
+    requests,
+  );
 
   return users
     .map((u) => {
-      const bal = balanceByUser.get(u.id);
+      const b = byUser.get(u.id)!;
       return {
         userId: u.id,
         name: u.name,
         loginId: u.loginId,
         role: u.role,
-        pendingDays: pendingByUser.get(u.id) ?? 0,
-        summary: summarizeBalance({
-          grantedDays: bal?.grantedDays ?? DEFAULT_ANNUAL_DAYS,
-          adjustDays: bal?.adjustDays ?? 0,
-          approvedRequests: approvedByUser.get(u.id) ?? [],
-        }),
+        pendingDays: b.pendingDays,
+        summary: b.summary,
       };
     })
     .sort(
@@ -237,28 +220,22 @@ export async function getAllUsersForSettings(
     db.leaveBalance.findMany({ where: { year } }),
     db.leaveRequest.findMany({
       where: { status: "APPROVED", startDate: { gte: start, lt: end } },
-      select: { userId: true, type: true, days: true },
+      select: { userId: true, type: true, days: true, status: true },
     }),
   ]);
 
-  const balByUser = new Map(balances.map((b) => [b.userId, b]));
-  const apprByUser = new Map<string, { type: LeaveType; days: number }[]>();
-  for (const r of approved) {
-    const arr = apprByUser.get(r.userId) ?? [];
-    arr.push({ type: r.type, days: r.days });
-    apprByUser.set(r.userId, arr);
-  }
+  const byUser = buildBalancesByUser(
+    users.map((u) => u.id),
+    balances,
+    approved,
+  );
 
   const statusOrder = { PENDING: 0, ACTIVE: 1, DISABLED: 2 } as const;
 
   return users
     .map((u) => ({
       ...u,
-      summary: summarizeBalance({
-        grantedDays: balByUser.get(u.id)?.grantedDays ?? DEFAULT_ANNUAL_DAYS,
-        adjustDays: balByUser.get(u.id)?.adjustDays ?? 0,
-        approvedRequests: apprByUser.get(u.id) ?? [],
-      }),
+      summary: byUser.get(u.id)!.summary,
     }))
     .sort(
       (a, b) =>

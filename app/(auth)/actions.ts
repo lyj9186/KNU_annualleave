@@ -5,7 +5,8 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { createSessionCookie, destroySessionCookie } from "@/lib/session";
-import { loginSchema, signupSchema, type FormState } from "@/lib/validation";
+import { loginSchema, signupSchema } from "@/lib/validation";
+import type { FormState } from "@/lib/form";
 import { DEFAULT_ANNUAL_DAYS } from "@/lib/leave";
 
 export async function login(

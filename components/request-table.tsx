@@ -11,7 +11,7 @@ import {
   TypeBadge,
 } from "@/components/ui";
 import type { RequestRow } from "@/lib/queries";
-import { daysKo, rangeKo } from "@/lib/format";
+import { daysKo, rangeKo } from "@/lib/datetime";
 
 export function RequestTable({
   rows,

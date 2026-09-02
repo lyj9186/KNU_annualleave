@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { decideLeaveRequest } from "./actions";
 import { Button } from "@/components/ui";
-import type { FormState } from "@/lib/validation";
+import type { FormState } from "@/lib/form";
 import type { LeaveStatus } from "@/lib/leave";
 
 const initial: FormState = {};

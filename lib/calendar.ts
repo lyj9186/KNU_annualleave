@@ -1,4 +1,4 @@
-import { ymd } from "@/lib/format";
+import { ymd } from "@/lib/datetime";
 
 export interface DayCell {
   date: Date;
