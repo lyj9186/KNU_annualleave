@@ -42,18 +42,26 @@ npm install
 
 ### 1-2. 데이터베이스 준비 (Neon)
 
+DB는 Neon **브랜치**로 운영/개발을 분리합니다.
+
+| 환경 | Neon 브랜치 | 연결 위치 |
+| --- | --- | --- |
+| 운영 (Vercel) | `main` (기본) | Vercel 환경변수 |
+| 로컬 개발 | `dev` | 로컬 `.env` |
+
 1. <https://neon.tech> 가입 후 프로젝트 생성 — Region은 `AWS ap-southeast-1 (Singapore)` (한국에서 가장 가까움, 왕복 약 70~90ms).
-2. 대시보드 **Connection Details** 에서 두 가지 연결 문자열을 복사합니다.
+2. **Branches** → **New Branch** 로 `dev` 브랜치 생성 (Parent: `main`, Include data: Head).
+3. `dev` 브랜치의 **Connection Details** 에서 연결 문자열을 복사합니다. (상단 브랜치 선택이 `dev` 인지 확인)
    - **Pooled connection** → `DATABASE_URL`
-   - **Direct connection** → `DIRECT_URL`
+   - **Direct connection** → `DIRECT_URL` (없으면 Pooled 에서 `-pooler` 만 제거)
 
 ### 1-3. 환경변수
 
 `.env` 파일을 열어 값을 채웁니다 (`.env` 는 git에 커밋되지 않습니다).
 
 ```bash
-DATABASE_URL="postgresql://...-pooler...neon.tech/neondb?sslmode=require"
-DIRECT_URL="postgresql://...neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgresql://...-pooler...neon.tech/neondb?sslmode=require&channel_binding=require"   # dev 브랜치 Pooled
+DIRECT_URL="postgresql://...neon.tech/neondb?sslmode=require&channel_binding=require"                # dev 브랜치 Direct
 SESSION_SECRET="<openssl rand -base64 32 결과>"
 ```
 
@@ -85,8 +93,11 @@ npm run dev
 ```bash
 npm test            # 단위 테스트 (연차 계산 로직)
 npm run db:studio   # Prisma Studio (DB GUI)
+npm run db:reset    # dev 브랜치 초기화 (전체 삭제 → 마이그레이션 재적용 → 마스터 시드)
 npm run build       # 프로덕션 빌드 검증
 ```
+
+> `db:reset` 은 `.env` 가 가리키는 DB(=dev 브랜치)만 건드립니다. 운영에는 절대 영향 없음.
 
 ---
 
@@ -110,38 +121,32 @@ git push -u origin main
 1. <https://vercel.com/new> → GitHub 저장소 **Import**.
 2. Framework Preset은 자동으로 **Next.js**. Build/Output 설정은 기본값 그대로.
    - Function Region은 `vercel.json` 에서 `sin1` (Singapore) 로 고정해 두었습니다 — DB와 같은 리전이라야 요청당 왕복이 짧습니다.
-3. **Environment Variables** 에 아래 3개를 등록 (Production + Preview):
+3. **Environment Variables** 에 아래 3개를 등록 (Production + Preview) — 여기에는 **`main` 브랜치** 연결 문자열을 넣습니다:
 
    | Key | Value |
    | --- | --- |
-   | `DATABASE_URL` | Neon Pooled connection |
-   | `DIRECT_URL` | Neon Direct connection |
+   | `DATABASE_URL` | Neon `main` 브랜치 Pooled connection |
+   | `DIRECT_URL` | Neon `main` 브랜치 Direct connection |
    | `SESSION_SECRET` | 로컬과 **다른** 새 랜덤 값 (`openssl rand -base64 32`) |
-
-   > 팁: Vercel의 **Neon 통합(Integrations)** 을 쓰면 `DATABASE_URL` 등이 자동 주입됩니다. 이 경우 `SESSION_SECRET` 만 수동 등록하면 됩니다.
 
 4. **Deploy**.
 
 ### 2-3. 스키마 & 마스터 계정 (최초 1회)
 
-로컬 `.env` 의 `DATABASE_URL` / `DIRECT_URL` 을 **운영 DB** 로 향하게 한 상태에서:
+운영(`main`) 브랜치 연결 문자열을 임시로 환경변수에 넣고 실행:
 
 ```bash
-npm run db:deploy   # prisma migrate deploy — 운영 DB에 마이그레이션 적용
-npm run db:seed     # 운영 DB에 마스터 계정 생성
+DATABASE_URL="<main Pooled>" DIRECT_URL="<main Direct>" npm run db:deploy   # 운영에 마이그레이션 적용
+DATABASE_URL="<main Pooled>" DIRECT_URL="<main Direct>" npm run db:seed     # 운영에 마스터 계정 생성
 ```
 
-또는 Vercel 빌드 시 자동 적용하려면 `package.json` 의 build 스크립트를 다음으로 변경:
+### 2-4. 이후 스키마 변경 워크플로우
 
-```json
-"build": "prisma migrate deploy && next build"
-```
-
-### 2-4. 이후 스키마 변경
-
-1. `prisma/schema.prisma` 수정 → `npm run db:migrate` (로컬, 마이그레이션 파일 생성)
-2. 커밋 & push → Vercel 자동 배포
-3. 운영 DB에 `npm run db:deploy` (또는 위 build 스크립트가 처리)
+1. `prisma/schema.prisma` 수정 → `npm run db:migrate` (로컬 `dev` 브랜치에 적용 + 마이그레이션 파일 생성)
+2. `lib/leave.test.ts` 등 갱신 → `npm test` → `npx tsc --noEmit`
+3. 커밋 & push → Vercel 자동 배포
+4. 운영(`main`) 브랜치에 마이그레이션 적용:
+   `DATABASE_URL="<main>" DIRECT_URL="<main>" npm run db:deploy`
 
 ---
 
