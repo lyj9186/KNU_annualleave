@@ -1,6 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import { isKrHoliday } from "@/lib/holidays/kr";
 import { expandLeaveUsage } from "./expand";
 import type { LeaveUsageRow } from "./types";
 
@@ -41,5 +42,6 @@ export async function getMonthlyLeaveUsage(
     })),
     year,
     month0,
+    isKrHoliday,
   );
 }

@@ -52,6 +52,18 @@ describe("expandLeaveUsage", () => {
     expect(rows.map((r) => ymd(r.date))).toEqual(["2026-09-01", "2026-09-02"]);
   });
 
+  it("isHoliday 를 주면 공휴일은 행에서 빠진다", () => {
+    // 추석 2026-09-25(금) 공휴일 처리, 연차 9/24(목)~9/28(월)
+    const isHol = (x: Date) => ymd(x) === "2026-09-25";
+    const rows = expandLeaveUsage(
+      [input({ startDate: d("2026-09-24"), endDate: d("2026-09-28") })],
+      2026,
+      8,
+      isHol,
+    );
+    expect(rows.map((r) => ymd(r.date))).toEqual(["2026-09-24", "2026-09-28"]);
+  });
+
   it("공가도 영업일마다 1행", () => {
     // 2026-09-01(화) ~ 2026-09-02(수)
     const rows = expandLeaveUsage(

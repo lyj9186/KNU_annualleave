@@ -33,7 +33,7 @@
 - **회원가입**은 `승인대기(PENDING)` 상태로 생성되며, 마스터가 활성화해야 로그인할 수 있습니다.
 - **연차 종류**: 연차(−1일) · 오전 반차(−0.5일) · 오후 반차(−0.5일) · 병가 · 공가(연차 미차감, 사용일수만 기록).
 - 잔여연차 = 가용연차 − (승인된 연차·반차 합계 + 마스터 수동 조정). 병가·공가는 차감하지 않습니다.
-- 영업일(월~금)만 계산하며 공휴일은 자동 제외하지 않습니다.
+- 연차 일수는 근무일(월~금)에서 **대한민국 공휴일을 제외**해 계산합니다. 공휴일은 메인 달력에 빨간색으로 표시되며, 데이터는 `lib/holidays/kr.ts` 에서 관리합니다 (음력·대체공휴일 때문에 매년 갱신).
 - **승인**: 연차 반영 / **반려**·**취소**: 반영 안 됨.
 
 ---
@@ -180,6 +180,7 @@ lib/
   dashboard/  queries      (메인 캘린더 · 잔여표)
   calendar/   grid          (달력 그리드 계산)
   status/     types · expand · csv · queries   (월별 연차현황 + CSV)
+  holidays/   kr            (대한민국 공휴일 표 — 매년 갱신)
 components/
   ui/         디자인 시스템 (index.ts 배럴) — Button/Field/Card/Table/Badge/Stat/ChipLink …
   calendar-month · month-picker · request-table · balance-cells · nav

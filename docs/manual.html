@@ -509,6 +509,7 @@
           <li><span class="swatch" style="background:var(--lt-sick)"></span>병가</li>
           <li><span class="swatch" style="background:var(--lt-public)"></span>공가</li>
           <li><span class="swatch" style="background:var(--lt-wait)"></span>승인 대기 <span class="mono" style="color:var(--muted)">*</span></li>
+          <li><span class="swatch" style="background:var(--lt-reject)"></span>공휴일 (빨간 날짜)</li>
         </ul>
       </div>
     </aside>
@@ -589,8 +590,8 @@
                 <dd>연차 <span class="tok">1일</span> · 오전 반차 / 오후 반차 <span class="tok">0.5일</span> · <b>병가</b> · <b>공가</b>. 병가와 공가는 사용일수만 기록하고 <b>연차에서 차감되지 않습니다</b> (공가 = 공적 사유의 인정 결근).</dd>
               </div>
               <div>
-                <dt>영업일</dt>
-                <dd>월~금만 일수로 계산합니다. <b>공휴일은 자동으로 빠지지 않으니</b> 신청할 때 직접 확인하세요.</dd>
+                <dt>근무일 계산</dt>
+                <dd>연차 일수는 월~금에서 <b>대한민국 공휴일을 뺀 날</b>로 계산합니다. 예를 들어 추석 연휴가 낀 기간에 연차를 내면 공휴일만큼은 차감되지 않습니다. 공휴일은 메인 달력에 <b>빨간색 날짜</b>로 표시됩니다.</dd>
               </div>
               <div>
                 <dt>잔여연차 계산</dt>
@@ -629,12 +630,14 @@
               <li>연 · 월 드롭다운, <span class="tok">‹</span> <span class="tok">›</span>, <span class="tok">이번 달</span> 버튼으로 달을 옮깁니다.</li>
               <li>모바일에서는 점이 찍힌 미니 달력에서 날짜를 누르면 그 날의 목록이 열립니다.</li>
               <li>캘린더 아래 <b>내 연차 현황</b>에는 본인의 가용 · 사용 · 잔여만 나옵니다.</li>
+              <li><b>대한민국 공휴일</b>은 날짜가 빨간색으로 표시됩니다.</li>
             </ul>
             <div class="cal-key">
               <span><i style="background:var(--lt-annual)"></i>승인된 연차</span>
               <span><i style="background:var(--lt-sick)"></i>병가</span>
               <span><i style="background:var(--lt-public)"></i>공가</span>
               <span><i style="background:var(--lt-wait)"></i>승인 대기 <span class="mono" style="color:var(--muted)">*</span></span>
+              <span><i style="background:var(--lt-reject)"></i>공휴일</span>
             </div>
           </article>
 
@@ -647,7 +650,7 @@
               <li><b>신청 일수</b>가 미리 표시됩니다. 필요하면 사유(200자)를 적습니다.</li>
               <li><span class="tok">연차 신청</span>을 누르면 <b>대기</b> 상태로 접수되고 팀장 승인을 기다립니다.</li>
             </ol>
-            <div class="note warn"><b>주의</b> — 선택한 기간에 영업일(월~금)이 없으면 신청할 수 없습니다.</div>
+            <div class="note warn"><b>주의</b> — 선택한 기간에 근무일(주말 · 공휴일 제외)이 없으면 신청할 수 없습니다. 신청 일수에서 공휴일이 빠지면 미리보기에 <span class="tok">공휴일 N일 제외</span>로 표시됩니다.</div>
             <div class="note">기간이 겹치는 본인 신청(대기 · 승인)이 있으면 신청할 수 없습니다. 단, <b>같은 날 오전 반차 + 오후 반차</b>는 함께 신청할 수 있습니다.</div>
           </article>
 
@@ -702,7 +705,7 @@
             <div class="path"><span class="seg">연차현황</span></div>
             <ol class="steps">
               <li>연 · 월 드롭다운으로 조회할 달을 고릅니다.</li>
-              <li>그 달에 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 · 공가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>).</li>
+              <li>그 달에 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 · 공가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>). 주말과 공휴일은 빠집니다.</li>
               <li><span class="tok">엑셀(CSV) 다운로드</span>를 누르면 <span class="tok">연차현황_2026-09.csv</span> 파일이 저장됩니다. 엑셀에서 바로 열리고 한글도 깨지지 않습니다.</li>
             </ol>
             <div class="note">예시 한 줄 — <span class="tok">김팀장 · 2026-09-15 · 오전반차 · 0.5</span>. 마스터는 이 목록에 나타나지 않습니다.</div>

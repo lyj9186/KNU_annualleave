@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { LEAVE_TYPE_SHORT } from "@/lib/leave";
 import type { CalendarLeave } from "@/lib/dashboard/queries";
 import { WEEKDAYS, daysNum, parseDateOnly, todayIso } from "@/lib/datetime";
+import { krHolidayName } from "@/lib/holidays/kr";
 import { MonthPicker } from "@/components/month-picker";
 
 function isSingleDay(l: CalendarLeave): boolean {
@@ -79,6 +80,7 @@ export function CalendarMonth({
     const date = parseDateOnly(selected);
     return {
       label: `${date.getUTCMonth() + 1}월 ${date.getUTCDate()}일 (${WEEKDAYS[date.getUTCDay()]})`,
+      holiday: krHolidayName(selected),
       items: leaves.filter((l) => coversDay(date, l.startDate, l.endDate)),
     };
   }, [selected, leaves]);
@@ -110,6 +112,7 @@ export function CalendarMonth({
 
           {cells.map((cell) => {
             const dayLeaves = leavesOn(cell.date);
+            const holiday = krHolidayName(cell.iso);
             const isSelected = cell.iso === selected;
             const isToday = cell.iso === todayStr;
             return (
@@ -118,7 +121,7 @@ export function CalendarMonth({
                 type="button"
                 onClick={() => setSelected(cell.iso)}
                 aria-pressed={isSelected}
-                aria-label={`${cell.date.getUTCMonth() + 1}월 ${cell.date.getUTCDate()}일${dayLeaves.length ? `, 연차 ${dayLeaves.length}건` : ""}`}
+                aria-label={`${cell.date.getUTCMonth() + 1}월 ${cell.date.getUTCDate()}일${holiday ? `, ${holiday}` : ""}${dayLeaves.length ? `, 연차 ${dayLeaves.length}건` : ""}`}
                 className={cn(
                   "flex min-h-[3rem] select-none flex-col items-center gap-0.5 bg-surface py-1.5 transition-colors",
                   !cell.inMonth && "bg-surface-muted/60",
@@ -134,7 +137,7 @@ export function CalendarMonth({
                         ? "text-faint"
                         : isToday
                           ? "font-bold text-brand"
-                          : cell.dow === 0
+                          : holiday || cell.dow === 0
                             ? "text-rose-500"
                             : cell.dow === 6
                               ? "text-blue-500"
@@ -169,13 +172,21 @@ export function CalendarMonth({
           <span className="flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />대기
           </span>
+          <span className="flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-sm bg-rose-400" />공휴일
+          </span>
         </div>
 
         <div className="mt-3 rounded-md border border-line">
           {selectedInfo ? (
             <>
-              <div className="border-b border-line px-3 py-2 text-sm font-semibold text-title">
-                {selectedInfo.label}
+              <div className="flex items-center gap-2 border-b border-line px-3 py-2 text-sm font-semibold text-title">
+                <span>{selectedInfo.label}</span>
+                {selectedInfo.holiday ? (
+                  <span className="rounded bg-rose-50 px-1.5 py-0.5 text-xs font-medium text-rose-700">
+                    {selectedInfo.holiday}
+                  </span>
+                ) : null}
               </div>
               {selectedInfo.items.length === 0 ? (
                 <p className="px-3 py-5 text-center text-sm text-faint">
@@ -215,6 +226,7 @@ export function CalendarMonth({
 
           {cells.map((cell) => {
             const dayLeaves = leavesOn(cell.date);
+            const holiday = krHolidayName(cell.iso);
             return (
               <div
                 key={cell.iso}
@@ -228,12 +240,22 @@ export function CalendarMonth({
                   className={cn(
                     "mb-1 text-right text-xs",
                     !cell.inMonth ? "text-slate-300" : "text-muted",
-                    cell.dow === 0 && cell.inMonth && "text-rose-500",
-                    cell.dow === 6 && cell.inMonth && "text-blue-500",
+                    cell.inMonth &&
+                      (holiday || cell.dow === 0) &&
+                      "text-rose-500",
+                    cell.dow === 6 && cell.inMonth && !holiday && "text-blue-500",
                   )}
                 >
                   {cell.date.getUTCDate()}
                 </div>
+                {holiday && cell.inMonth ? (
+                  <div
+                    className="mb-1 truncate rounded bg-rose-50 px-1 py-0.5 text-[11px] font-medium leading-tight text-rose-700"
+                    title={holiday}
+                  >
+                    {holiday}
+                  </div>
+                ) : null}
                 <ul className="space-y-0.5">
                   {dayLeaves.map((l) => (
                     <li
@@ -257,7 +279,8 @@ export function CalendarMonth({
       </div>
 
       <p className="mt-2 hidden text-xs text-faint lg:block">
-        * 표시는 승인 대기 중인 신청입니다.
+        * 표시는 승인 대기 중인 신청 · <span className="text-rose-500">빨간 날짜</span>는
+        공휴일입니다.
       </p>
     </div>
   );

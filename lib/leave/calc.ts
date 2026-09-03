@@ -11,36 +11,51 @@ export function isWeekend(d: Date): boolean {
   return day === 0 || day === 6;
 }
 
-/** start~end(양 끝 포함) 사이의 영업일(월~금)을 UTC 자정 Date 배열로 */
-export function eachBusinessDay(start: Date, end: Date): Date[] {
+/** 근무일 판정용 공휴일 프레디킷 (주말 외 추가로 제외할 날). */
+export type HolidayCheck = (d: Date) => boolean;
+
+/**
+ * start~end(양 끝 포함) 사이의 근무일을 UTC 자정 Date 배열로.
+ * 주말(토·일) 제외, `isHoliday` 를 주면 공휴일도 제외.
+ */
+export function eachBusinessDay(
+  start: Date,
+  end: Date,
+  isHoliday?: HolidayCheck,
+): Date[] {
   const s = toUtcMidnight(start);
   const e = toUtcMidnight(end);
   const out: Date[] = [];
   const cur = new Date(s);
   while (cur <= e) {
-    if (!isWeekend(cur)) out.push(new Date(cur));
+    if (!isWeekend(cur) && !isHoliday?.(cur)) out.push(new Date(cur));
     cur.setUTCDate(cur.getUTCDate() + 1);
   }
   return out;
 }
 
-/** start~end(양 끝 포함) 사이의 영업일(월~금) 수 */
-export function businessDaysBetween(start: Date, end: Date): number {
-  return eachBusinessDay(start, end).length;
+/** start~end(양 끝 포함) 사이의 근무일 수 (주말 · 선택적 공휴일 제외) */
+export function businessDaysBetween(
+  start: Date,
+  end: Date,
+  isHoliday?: HolidayCheck,
+): number {
+  return eachBusinessDay(start, end, isHoliday).length;
 }
 
 /**
  * 신청 일수 계산.
- * - 연차 / 병가: 기간 내 영업일 수
+ * - 연차 / 병가 / 공가: 기간 내 근무일 수 (주말 · 공휴일 제외)
  * - 반차: 0.5 (하루)
  */
 export function computeLeaveDays(
   type: LeaveType,
   startDate: Date,
   endDate: Date,
+  isHoliday?: HolidayCheck,
 ): number {
   if (isHalfDay(type)) return 0.5;
-  return businessDaysBetween(startDate, endDate);
+  return businessDaysBetween(startDate, endDate, isHoliday);
 }
 
 export interface BalanceInput {

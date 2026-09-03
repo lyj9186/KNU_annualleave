@@ -48,6 +48,19 @@ describe("eachBusinessDay", () => {
       businessDaysBetween(d("2026-03-02"), d("2026-03-20")),
     );
   });
+
+  it("isHoliday 프레디킷을 주면 그 날도 제외", () => {
+    // 추석 2026-09-25(금) 를 공휴일로 간주
+    const isHol = (x: Date) => ymd(x) === "2026-09-25";
+    // 9/24(목) ~ 9/28(월): 목·금(공휴일)·토·일·월 → 목, 월
+    expect(
+      eachBusinessDay(d("2026-09-24"), d("2026-09-28"), isHol).map(ymd),
+    ).toEqual(["2026-09-24", "2026-09-28"]);
+    expect(
+      businessDaysBetween(d("2026-09-24"), d("2026-09-28"), isHol),
+    ).toBe(2);
+    expect(businessDaysBetween(d("2026-09-24"), d("2026-09-28"))).toBe(3);
+  });
 });
 
 describe("computeLeaveDays", () => {
@@ -62,6 +75,16 @@ describe("computeLeaveDays", () => {
   });
   it("병가: 영업일수 (차감은 별도)", () => {
     expect(computeLeaveDays("SICK", d("2026-03-02"), d("2026-03-03"))).toBe(2);
+  });
+  it("공휴일 제외 (isHoliday 전달 시)", () => {
+    const isHol = (x: Date) => ymd(x) === "2026-09-25";
+    expect(
+      computeLeaveDays("ANNUAL", d("2026-09-24"), d("2026-09-28"), isHol),
+    ).toBe(2);
+    // 반차는 공휴일 무관하게 0.5
+    expect(
+      computeLeaveDays("HALF_AM", d("2026-09-25"), d("2026-09-25"), isHol),
+    ).toBe(0.5);
   });
 });
 

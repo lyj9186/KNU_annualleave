@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth/dal";
 import { revalidateLeaveViews, revalidateUserViews } from "@/lib/revalidate";
 import { leaveRequestSchema, resolveEndDate } from "@/lib/leave/schema";
 import { computeLeaveDays } from "@/lib/leave/calc";
+import { isKrHoliday } from "@/lib/holidays/kr";
 import { isHalfDay, LEAVE_TYPE_LABELS } from "@/lib/leave/types";
 import { parseDateOnly } from "@/lib/datetime";
 import { fieldErrors, readForm, type FormState } from "@/lib/form";
@@ -47,11 +48,13 @@ export async function createLeaveRequest(
   const { type } = parsed.data;
   const startDate = parseDateOnly(parsed.data.startDate);
   const endDate = parseDateOnly(resolveEndDate(parsed.data));
-  const days = computeLeaveDays(type, startDate, endDate);
+  const days = computeLeaveDays(type, startDate, endDate, isKrHoliday);
 
   if (days <= 0) {
     return {
-      errors: { startDate: ["선택한 기간에 영업일(월~금)이 없습니다."] },
+      errors: {
+        startDate: ["선택한 기간에 근무일이 없습니다 (주말 · 공휴일 제외)."],
+      },
       values: raw,
     };
   }

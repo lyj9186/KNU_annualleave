@@ -13,11 +13,13 @@ import {
 import {
   LEAVE_TYPES,
   LEAVE_TYPE_LABELS,
+  businessDaysBetween,
   computeLeaveDays,
   isExempt,
   isHalfDay,
   type LeaveType,
 } from "@/lib/leave";
+import { isKrHoliday } from "@/lib/holidays/kr";
 import { daysKo, parseDateOnly, todayIso } from "@/lib/datetime";
 import type { FormState } from "@/lib/form";
 
@@ -45,11 +47,18 @@ export function LeaveForm({
     const s = parseDateOnly(start);
     const e = parseDateOnly(effectiveEnd);
     if (e >= s) {
-      const d = computeLeaveDays(type, s, e);
-      preview =
-        d > 0
-          ? `신청 일수: ${daysKo(d)}${isExempt(type) ? " (연차 미차감)" : ""}`
-          : "선택한 기간에 영업일(월~금)이 없습니다.";
+      const d = computeLeaveDays(type, s, e, isKrHoliday);
+      if (d > 0) {
+        const holidayCut = isHalfDay(type)
+          ? 0
+          : businessDaysBetween(s, e) - d;
+        preview =
+          `신청 일수: ${daysKo(d)}` +
+          (holidayCut > 0 ? ` · 공휴일 ${holidayCut}일 제외` : "") +
+          (isExempt(type) ? " · 연차 미차감" : "");
+      } else {
+        preview = "선택한 기간에 근무일이 없습니다 (주말 · 공휴일 제외).";
+      }
     } else {
       preview = "종료일이 시작일보다 빠릅니다.";
     }
