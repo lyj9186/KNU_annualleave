@@ -1,7 +1,13 @@
 import { z } from "zod";
 import { parseDateOnly } from "@/lib/datetime";
 
-export const leaveTypeEnum = z.enum(["ANNUAL", "HALF_AM", "HALF_PM", "SICK"]);
+export const leaveTypeEnum = z.enum([
+  "ANNUAL",
+  "HALF_AM",
+  "HALF_PM",
+  "SICK",
+  "PUBLIC",
+]);
 
 /** 반차이거나 종료일 미지정이면 종료일 = 시작일 */
 export function resolveEndDate(v: {

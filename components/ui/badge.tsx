@@ -40,6 +40,7 @@ export const LEAVE_TYPE_STYLE: Record<LeaveType, string> = {
   HALF_AM: "bg-sky-100 text-sky-800",
   HALF_PM: "bg-indigo-100 text-indigo-800",
   SICK: "bg-fuchsia-100 text-fuchsia-800",
+  PUBLIC: "bg-teal-100 text-teal-800",
 };
 
 export const ROLE_STYLE: Record<Role, string> = {

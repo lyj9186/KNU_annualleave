@@ -1,5 +1,6 @@
 import {
   DEFAULT_ANNUAL_DAYS,
+  isDeductible,
   summarizeBalance,
   type BalanceSummary,
   type LeaveStatus,
@@ -21,7 +22,7 @@ export interface BalanceRequest {
 
 export interface UserBalance {
   summary: BalanceSummary;
-  /** 승인대기 중인 비-병가 신청 일수 합계 */
+  /** 승인대기 중인 차감 대상(연차·반차) 신청 일수 합계 */
   pendingDays: number;
 }
 
@@ -44,7 +45,7 @@ export function buildBalancesByUser(
       const arr = approvedByUser.get(r.userId) ?? [];
       arr.push({ type: r.type, days: r.days });
       approvedByUser.set(r.userId, arr);
-    } else if (r.status === "PENDING" && r.type !== "SICK") {
+    } else if (r.status === "PENDING" && isDeductible(r.type)) {
       pendingByUser.set(
         r.userId,
         (pendingByUser.get(r.userId) ?? 0) + r.days,

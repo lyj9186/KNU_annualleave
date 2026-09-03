@@ -35,13 +35,29 @@ describe("buildBalancesByUser", () => {
     expect(map.get("b")!.summary.remaining).toBe(15);
   });
 
-  it("PENDING 병가는 pendingDays 에 포함하지 않음", () => {
+  it("PENDING 병가·공가는 pendingDays 에 포함하지 않음", () => {
     const map = buildBalancesByUser(
       ["c"],
       [],
-      [req("c", "SICK", 3, "PENDING"), req("c", "HALF_PM", 0.5, "PENDING")],
+      [
+        req("c", "SICK", 3, "PENDING"),
+        req("c", "PUBLIC", 2, "PENDING"),
+        req("c", "HALF_PM", 0.5, "PENDING"),
+      ],
     );
     expect(map.get("c")!.pendingDays).toBe(0.5);
+  });
+
+  it("승인된 공가는 publicUsed 로만 잡히고 잔여를 깎지 않음", () => {
+    const map = buildBalancesByUser(
+      ["f"],
+      [{ userId: "f", grantedDays: 15, adjustDays: 0 }],
+      [req("f", "PUBLIC", 3, "APPROVED"), req("f", "ANNUAL", 1, "APPROVED")],
+    );
+    const f = map.get("f")!;
+    expect(f.summary.used).toBe(1);
+    expect(f.summary.remaining).toBe(14);
+    expect(f.summary.publicUsed).toBe(3);
   });
 
   it("adjustDays 가 사용연차에 가산된다", () => {

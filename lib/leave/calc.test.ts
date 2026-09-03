@@ -66,7 +66,7 @@ describe("computeLeaveDays", () => {
 });
 
 describe("summarizeBalance", () => {
-  it("연차/반차 차감, 병가 미차감", () => {
+  it("연차/반차 차감, 병가·공가 미차감", () => {
     const s = summarizeBalance({
       grantedDays: 15,
       adjustDays: 0,
@@ -75,11 +75,13 @@ describe("summarizeBalance", () => {
         { type: "HALF_AM", days: 0.5 },
         { type: "HALF_PM", days: 0.5 },
         { type: "SICK", days: 2 },
+        { type: "PUBLIC", days: 1 },
       ],
     });
     expect(s.used).toBe(4);
     expect(s.remaining).toBe(11);
     expect(s.sickUsed).toBe(2);
+    expect(s.publicUsed).toBe(1);
   });
 
   it("수동 조정 반영", () => {

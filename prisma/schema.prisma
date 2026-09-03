@@ -27,6 +27,7 @@ enum LeaveType {
   HALF_AM // 오전 반차 (0.5일)
   HALF_PM // 오후 반차 (0.5일)
   SICK // 병가 (연차 차감 없음)
+  PUBLIC // 공가 (연차 차감 없음 — 공적 사유)
 }
 
 enum LeaveStatus {

@@ -7,7 +7,27 @@ import {
   summarizeBalance,
   type BalanceSummary,
 } from "@/lib/leave/calc";
+import { ROLE_ORDER, type Role } from "@/lib/leave/types";
 import { requestSelect, toRequestRow, type RequestRow } from "@/lib/leave/request";
+
+export interface ProxyTarget {
+  id: string;
+  name: string;
+  role: Role;
+}
+
+/** 마스터 대리 등록 대상 후보 (활성 · 마스터 제외, 팀장 → 사용자 순) */
+export async function getProxyTargets(): Promise<ProxyTarget[]> {
+  const users = await db.user.findMany({
+    where: { status: "ACTIVE", role: { not: "MASTER" } },
+    select: { id: true, name: true, role: true },
+  });
+  return users.sort(
+    (a, b) =>
+      ROLE_ORDER[a.role] - ROLE_ORDER[b.role] ||
+      a.name.localeCompare(b.name, "ko"),
+  );
+}
 
 /** 특정 사용자의 신청 내역 (최근순) */
 export async function getUserRequests(userId: string): Promise<RequestRow[]> {

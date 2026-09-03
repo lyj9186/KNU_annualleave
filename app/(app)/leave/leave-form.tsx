@@ -14,6 +14,7 @@ import {
   LEAVE_TYPES,
   LEAVE_TYPE_LABELS,
   computeLeaveDays,
+  isExempt,
   isHalfDay,
   type LeaveType,
 } from "@/lib/leave";
@@ -22,7 +23,15 @@ import type { FormState } from "@/lib/form";
 
 const initial: FormState = {};
 
-export function LeaveForm() {
+export function LeaveForm({
+  targetUserId,
+  targetName,
+}: {
+  /** 마스터 대리 등록 대상자 id (없으면 본인 신청) */
+  targetUserId?: string;
+  targetName?: string;
+}) {
+  const proxy = Boolean(targetUserId);
   const [state, action] = useActionState(createLeaveRequest, initial);
   const [type, setType] = useState<LeaveType>("ANNUAL");
   const [start, setStart] = useState(todayIso());
@@ -39,7 +48,7 @@ export function LeaveForm() {
       const d = computeLeaveDays(type, s, e);
       preview =
         d > 0
-          ? `신청 일수: ${daysKo(d)}${type === "SICK" ? " (연차 미차감)" : ""}`
+          ? `신청 일수: ${daysKo(d)}${isExempt(type) ? " (연차 미차감)" : ""}`
           : "선택한 기간에 영업일(월~금)이 없습니다.";
     } else {
       preview = "종료일이 시작일보다 빠릅니다.";
@@ -50,6 +59,10 @@ export function LeaveForm() {
     <form action={action} className="space-y-4">
       {state.message ? (
         <FormMessage ok={state.ok}>{state.message}</FormMessage>
+      ) : null}
+
+      {proxy ? (
+        <input type="hidden" name="userId" value={targetUserId} />
       ) : null}
 
       <Field label="종류" htmlFor="type" error={state.errors?.type}>
@@ -109,7 +122,9 @@ export function LeaveForm() {
         <Textarea id="reason" name="reason" rows={2} maxLength={200} />
       </Field>
 
-      <SubmitButton pendingText="신청 중…">연차 신청</SubmitButton>
+      <SubmitButton pendingText={proxy ? "등록 중…" : "신청 중…"}>
+        {proxy ? `${targetName ?? "대상자"} 연차 등록` : "연차 신청"}
+      </SubmitButton>
     </form>
   );
 }

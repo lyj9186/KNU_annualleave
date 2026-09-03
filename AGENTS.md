@@ -35,10 +35,10 @@ components/
 - **Prisma 7**: 드라이버 어댑터 필수. 클라이언트는 `lib/generated/prisma/` 에 TS로 생성됨(gitignore). 설정 파일은 `prisma7.config.ts`. 스키마 변경 후 `npm run db:migrate`.
 - **인증**: 자체 구현. `proxy.ts`(Next 16 미들웨어, Node 런타임) = 낙관적 리다이렉트만. 실제 권한 검증은 각 page/action 에서 `lib/auth/dal.ts` 의 `requireUser` / `requireApprover` / `requireMaster` 로.
 - **서버 액션**: 모든 mutation 은 `lib/<feature>/actions.ts` 의 `use server` 함수. 액션 내부에서 권한 재확인. `useActionState` + `FormState`(`lib/form.ts`). FormData 는 `readForm()`, Zod 에러는 `fieldErrors()`. 재검증은 `revalidateLeaveViews()` / `revalidateUserViews()`.
-- **연차 계산**: `lib/leave/calc.ts` 순수 함수. 수정 시 `lib/leave/calc.test.ts` 갱신.
+- **연차 계산**: `lib/leave/calc.ts` 순수 함수. 수정 시 `lib/leave/calc.test.ts` 갱신. 종류(`LeaveType`): `ANNUAL·HALF_AM·HALF_PM` = 차감, `SICK·PUBLIC`(병가·공가) = 미차감(`isExempt`) → `summarizeBalance` 의 `sickUsed`/`publicUsed` 에만 집계.
 - **날짜**: DB 는 `@db.Date`, 코드에서는 항상 UTC 자정 기준(`lib/datetime.ts`). 사용자의 "오늘"만 로컬(`todayIso`). 표시 형식은 `YYYY-MM-DD (요일)` (`ymdKo`).
 - **역할**:
-  - 마스터 = 결재·계정관리 전용. 연차를 신청하지 않으므로 캘린더·현황표·연차현황·"연차 등록"(메뉴/`/leave`/`createLeaveRequest`)에서 제외.
+  - 마스터 = 본인 연차 미사용(캘린더·현황표·연차현황에서 제외). `/leave` 는 마스터일 때 **대리 등록 화면** — 대상자 선택(`?userId=`) 후 `createLeaveRequest` 가 `userId` 를 받아 그 사용자의 연차를 **즉시 APPROVED** 로 생성.
   - 팀장·마스터는 본인 신청도 직접 승인/반려/취소 가능 (`lib/approvals/actions.ts` 에 자가 승인 제한 없음).
   - 연차현황(`/status`)·승인(`/approvals`) = 승인자(팀장·마스터) 전용. 메인 하단 현황표는 일반 사용자에게 본인 행만 (`getYearOverview(year, onlyUserId)`), 달력은 전원 공개.
 - **비밀번호**: 최소 4자 (`passwordField`, `lib/schema.ts`).

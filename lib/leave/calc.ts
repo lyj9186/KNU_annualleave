@@ -54,16 +54,22 @@ export interface BalanceSummary {
   granted: number;
   used: number;
   remaining: number;
+  /** 병가 사용일수 (연차 미차감) */
   sickUsed: number;
+  /** 공가 사용일수 (연차 미차감) */
+  publicUsed: number;
 }
 
 /** 사용자 1명의 특정 연도 연차 현황 계산 */
 export function summarizeBalance(input: BalanceInput): BalanceSummary {
   let used = 0;
   let sickUsed = 0;
+  let publicUsed = 0;
   for (const r of input.approvedRequests) {
     if (r.type === "SICK") {
       sickUsed += r.days;
+    } else if (r.type === "PUBLIC") {
+      publicUsed += r.days;
     } else if (isDeductible(r.type)) {
       used += r.days;
     }
@@ -75,6 +81,7 @@ export function summarizeBalance(input: BalanceInput): BalanceSummary {
     used,
     remaining: round2(granted - used),
     sickUsed: round2(sickUsed),
+    publicUsed: round2(publicUsed),
   };
 }
 

@@ -52,6 +52,19 @@ describe("expandLeaveUsage", () => {
     expect(rows.map((r) => ymd(r.date))).toEqual(["2026-09-01", "2026-09-02"]);
   });
 
+  it("공가도 영업일마다 1행", () => {
+    // 2026-09-01(화) ~ 2026-09-02(수)
+    const rows = expandLeaveUsage(
+      [input({ type: "PUBLIC", startDate: d("2026-09-01"), endDate: d("2026-09-02") })],
+      2026,
+      8,
+    );
+    expect(rows.map((r) => [ymd(r.date), r.type, r.days])).toEqual([
+      ["2026-09-01", "PUBLIC", 1],
+      ["2026-09-02", "PUBLIC", 1],
+    ]);
+  });
+
   it("반차 → 1행 0.5일", () => {
     const rows = expandLeaveUsage(
       [input({ type: "HALF_AM", startDate: d("2026-09-02"), endDate: d("2026-09-02") })],

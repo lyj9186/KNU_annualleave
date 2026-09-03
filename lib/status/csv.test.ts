@@ -31,6 +31,11 @@ describe("toLeaveUsageCsv", () => {
     expect(csv).toContain(",연차,1\r\n");
   });
 
+  it("공가는 종류 '공가' 로", () => {
+    const csv = toLeaveUsageCsv([row({ type: "PUBLIC", days: 1 })]);
+    expect(csv).toContain(",공가,1\r\n");
+  });
+
   it("콤마가 든 이름은 큰따옴표로 감싼다", () => {
     const csv = toLeaveUsageCsv([row({ name: "홍,길동" })]);
     expect(csv).toContain('"홍,길동",2026-09-02');

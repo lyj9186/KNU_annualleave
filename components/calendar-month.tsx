@@ -22,6 +22,7 @@ function leaveChipClass(l: CalendarLeave): string {
   if (l.status === "PENDING")
     return "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200";
   if (l.type === "SICK") return "bg-fuchsia-50 text-fuchsia-700";
+  if (l.type === "PUBLIC") return "bg-teal-50 text-teal-700";
   return "bg-blue-50 text-blue-700";
 }
 
@@ -29,6 +30,7 @@ function leaveChipClass(l: CalendarLeave): string {
 function dotClass(l: CalendarLeave): string {
   if (l.status === "PENDING") return "bg-amber-400";
   if (l.type === "SICK") return "bg-fuchsia-400";
+  if (l.type === "PUBLIC") return "bg-teal-500";
   return "bg-blue-500";
 }
 
@@ -160,6 +162,9 @@ export function CalendarMonth({
           </span>
           <span className="flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400" />병가
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-teal-500" />공가
           </span>
           <span className="flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />대기

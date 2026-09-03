@@ -13,6 +13,7 @@ export const LEAVE_TYPE_LABELS: Record<LeaveType, string> = {
   HALF_AM: "오전 반차",
   HALF_PM: "오후 반차",
   SICK: "병가",
+  PUBLIC: "공가",
 };
 
 export const LEAVE_TYPE_SHORT: Record<LeaveType, string> = {
@@ -20,6 +21,7 @@ export const LEAVE_TYPE_SHORT: Record<LeaveType, string> = {
   HALF_AM: "오전반차",
   HALF_PM: "오후반차",
   SICK: "병가",
+  PUBLIC: "공가",
 };
 
 export const LEAVE_STATUS_LABELS: Record<LeaveStatus, string> = {
@@ -56,7 +58,13 @@ export const USER_STATUS_LABELS: Record<UserStatus, string> = {
 };
 
 /** 종류 선택 순서 */
-export const LEAVE_TYPES: LeaveType[] = ["ANNUAL", "HALF_AM", "HALF_PM", "SICK"];
+export const LEAVE_TYPES: LeaveType[] = [
+  "ANNUAL",
+  "HALF_AM",
+  "HALF_PM",
+  "SICK",
+  "PUBLIC",
+];
 /** 역할 선택 순서 (폼) */
 export const ROLE_OPTIONS: Role[] = ["USER", "TEAM_LEAD", "MASTER"];
 /** 계정 상태 선택 순서 (폼) */
@@ -78,7 +86,12 @@ export function isHalfDay(type: LeaveType): boolean {
   return type === "HALF_AM" || type === "HALF_PM";
 }
 
-/** 연차에서 차감되는 종류인지 (병가는 차감하지 않음) */
+/** 연차 잔여에서 차감하지 않는 종류 (병가 · 공가) */
+export function isExempt(type: LeaveType): boolean {
+  return type === "SICK" || type === "PUBLIC";
+}
+
+/** 연차에서 차감되는 종류인지 (병가 · 공가는 차감하지 않음) */
 export function isDeductible(type: LeaveType): boolean {
-  return type !== "SICK";
+  return !isExempt(type);
 }

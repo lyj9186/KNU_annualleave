@@ -41,6 +41,7 @@
     --lt-am: #0898c9;
     --lt-pm: #5b62e0;
     --lt-sick: #cf47c9;
+    --lt-public: #10998c;
     --lt-wait: #e0952a;
     --lt-ok: #17a06a;
     --lt-reject: #e5556f;
@@ -506,6 +507,7 @@
         <ul>
           <li><span class="swatch" style="background:var(--lt-annual)"></span>승인된 연차</li>
           <li><span class="swatch" style="background:var(--lt-sick)"></span>병가</li>
+          <li><span class="swatch" style="background:var(--lt-public)"></span>공가</li>
           <li><span class="swatch" style="background:var(--lt-wait)"></span>승인 대기 <span class="mono" style="color:var(--muted)">*</span></li>
         </ul>
       </div>
@@ -528,14 +530,15 @@
             <tbody>
               <tr><th scope="row">메인 캘린더 (전 직원)</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
               <tr><th scope="row">메인 하단 현황표</th><td class="part">본인만</td><td class="part">전체</td><td class="part">전체</td></tr>
-              <tr><th scope="row">연차 등록 · 철회</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+              <tr><th scope="row">연차 등록 (본인 신청) · 철회</th><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+              <tr><th scope="row">연차 대리 등록 (다른 사용자)</th><td class="no">—</td><td class="no">—</td><td class="part">즉시 승인</td></tr>
               <tr><th scope="row">승인 · 반려 · 취소</th><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
               <tr><th scope="row">연차현황 조회 · CSV 다운로드</th><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
               <tr><th scope="row">계정 · 비밀번호 · 잔여 관리</th><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="matrix-note">팀장과 마스터는 <b>본인이 낸 신청도 직접 승인</b>할 수 있습니다. 마스터는 연차를 사용하지 않아 캘린더 · 현황표 · 연차현황에 표시되지 않습니다.</p>
+        <p class="matrix-note">팀장과 마스터는 <b>본인이 낸 신청도 직접 승인</b>할 수 있습니다. 마스터는 본인 연차를 쓰지 않아 캘린더 · 현황표 · 연차현황에 표시되지 않지만, <b>다른 사용자의 연차를 대리 등록</b>할 수 있습니다.</p>
       </div>
 
       <!-- COMMON -->
@@ -583,7 +586,7 @@
             <dl class="facts">
               <div>
                 <dt>연차 종류</dt>
-                <dd>연차 <span class="tok">1일</span> · 오전 반차 / 오후 반차 <span class="tok">0.5일</span> · 병가는 사용일수만 기록하고 <b>연차에서 차감되지 않습니다</b>.</dd>
+                <dd>연차 <span class="tok">1일</span> · 오전 반차 / 오후 반차 <span class="tok">0.5일</span> · <b>병가</b> · <b>공가</b>. 병가와 공가는 사용일수만 기록하고 <b>연차에서 차감되지 않습니다</b> (공가 = 공적 사유의 인정 결근).</dd>
               </div>
               <div>
                 <dt>영업일</dt>
@@ -591,7 +594,7 @@
               </div>
               <div>
                 <dt>잔여연차 계산</dt>
-                <dd>가용연차 − (승인된 연차 · 반차 합계 + 마스터 수동 조정).</dd>
+                <dd>가용연차 − (승인된 연차 · 반차 합계 + 마스터 수동 조정). 병가 · 공가는 차감하지 않습니다.</dd>
               </div>
               <div>
                 <dt>신청 상태</dt>
@@ -630,6 +633,7 @@
             <div class="cal-key">
               <span><i style="background:var(--lt-annual)"></i>승인된 연차</span>
               <span><i style="background:var(--lt-sick)"></i>병가</span>
+              <span><i style="background:var(--lt-public)"></i>공가</span>
               <span><i style="background:var(--lt-wait)"></i>승인 대기 <span class="mono" style="color:var(--muted)">*</span></span>
             </div>
           </article>
@@ -638,7 +642,7 @@
             <h3>연차 등록</h3>
             <div class="path"><span class="seg">연차 등록</span></div>
             <ol class="steps">
-              <li><b>종류</b>를 고릅니다 — 연차 / 오전 반차 / 오후 반차 / 병가.</li>
+              <li><b>종류</b>를 고릅니다 — 연차 / 오전 반차 / 오후 반차 / 병가 / 공가.</li>
               <li><b>시작일</b>과 <b>종료일</b>을 선택합니다. 반차는 하루만 신청되어 종료일이 자동으로 맞춰집니다.</li>
               <li><b>신청 일수</b>가 미리 표시됩니다. 필요하면 사유(200자)를 적습니다.</li>
               <li><span class="tok">연차 신청</span>을 누르면 <b>대기</b> 상태로 접수되고 팀장 승인을 기다립니다.</li>
@@ -686,7 +690,7 @@
             <div class="path"><span class="seg">승인</span></div>
             <ol class="steps">
               <li>상태 탭에서 <b>대기</b>를 선택합니다. 승인 / 반려 / 취소 탭에서 지난 처리 내역도 볼 수 있습니다.</li>
-              <li>필요하면 <b>종류</b> 필터로 좁힙니다 — 전체 / 연차 / 오전 반차 / 오후 반차 / 병가.</li>
+              <li>필요하면 <b>종류</b> 필터로 좁힙니다 — 전체 / 연차 / 오전 반차 / 오후 반차 / 병가 / 공가.</li>
               <li>각 신청에 메모(선택)를 적고 <span class="tok">승인</span> · <span class="tok">반려</span> · <span class="tok">취소</span> 중 하나를 누릅니다. 이미 승인된 건은 <b>취소</b>만 가능합니다.</li>
             </ol>
             <div class="note"><b>본인이 낸 신청도 직접 처리</b>할 수 있습니다.</div>
@@ -698,7 +702,7 @@
             <div class="path"><span class="seg">연차현황</span></div>
             <ol class="steps">
               <li>연 · 월 드롭다운으로 조회할 달을 고릅니다.</li>
-              <li>그 달에 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>).</li>
+              <li>그 달에 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 · 공가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>).</li>
               <li><span class="tok">엑셀(CSV) 다운로드</span>를 누르면 <span class="tok">연차현황_2026-09.csv</span> 파일이 저장됩니다. 엑셀에서 바로 열리고 한글도 깨지지 않습니다.</li>
             </ol>
             <div class="note">예시 한 줄 — <span class="tok">김팀장 · 2026-09-15 · 오전반차 · 0.5</span>. 마스터는 이 목록에 나타나지 않습니다.</div>
@@ -711,12 +715,22 @@
       <section id="master" style="--role:var(--role-master)">
         <div class="role-head">
           <span class="tag">마스터</span>
-          <h2>계정과 연차 잔여 관리하기</h2>
-          <p><b>마스터는 연차를 신청하지 않습니다.</b> "연차 등록" 메뉴가 없고, 캘린더 · 현황표 · 연차현황에도 표시되지 않습니다. 승인과 연차현황 사용법은 팀장과 같습니다.</p>
-          <p class="menu"><b>메뉴</b>메인 · 승인 · 연차현황 · 연차설정</p>
+          <h2>계정 관리 · 연차 대리 등록</h2>
+          <p><b>마스터는 본인 연차를 쓰지 않습니다</b> — 캘린더 · 현황표 · 연차현황에 마스터 본인은 나오지 않습니다. 대신 다른 사용자의 연차를 대신 등록할 수 있습니다. 승인과 연차현황 사용법은 팀장과 같습니다.</p>
+          <p class="menu"><b>메뉴</b>메인 · 연차 등록 · 승인 · 연차현황 · 연차설정</p>
         </div>
 
         <div class="tasks">
+
+          <article class="task">
+            <h3>연차 대리 등록</h3>
+            <div class="path"><span class="seg">연차 등록</span></div>
+            <ol class="steps">
+              <li><b>대상자</b>를 선택합니다 (사용자 · 팀장). 선택하면 그 사람의 연차 현황과 신청 내역이 함께 표시됩니다.</li>
+              <li>종류 · 기간 · 사유를 입력하고 <span class="tok">(이름) 연차 등록</span>을 누릅니다.</li>
+              <li>등록 즉시 <b>승인 상태</b>로 반영됩니다 (처리 메모: "마스터 대리 등록"). 대상자는 이 건을 철회할 수 없으며, 되돌리려면 승인 화면에서 <b>취소</b>합니다.</li>
+            </ol>
+          </article>
 
           <article class="task">
             <h3>계정 승인</h3>

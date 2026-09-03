@@ -81,8 +81,8 @@ export default async function MainPage({
           title={canSeeAll ? `${y}년 연차 현황` : `${y}년 내 연차 현황`}
           description={
             canSeeAll
-              ? "가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가 미차감)"
-              : "본인 기준 · 가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가 미차감)"
+              ? "가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가·공가 미차감)"
+              : "본인 기준 · 가용 · 사용 · 잔여 (연차 −1일, 반차 −0.5일, 병가·공가 미차감)"
           }
         />
         <CardBody className="p-0">
@@ -140,6 +140,13 @@ export default async function MainPage({
                       </span>
                     </RecordRow>
                   ) : null}
+                  {row.summary.publicUsed > 0 ? (
+                    <RecordRow label="공가사용">
+                      <span className="tabular">
+                        {daysNum(row.summary.publicUsed)}
+                      </span>
+                    </RecordRow>
+                  ) : null}
                 </RecordCard>
               ))}
             </RecordList>
@@ -154,11 +161,12 @@ export default async function MainPage({
                 <TH className="text-right">잔여연차</TH>
                 <TH className="text-right">승인대기</TH>
                 <TH className="text-right">병가사용</TH>
+                <TH className="text-right">공가사용</TH>
               </TR>
             </THead>
             <TBody>
               {overview.length === 0 ? (
-                <EmptyRow colSpan={7} />
+                <EmptyRow colSpan={8} />
               ) : (
                 overview.map((row) => (
                   <TR key={row.userId}>
@@ -173,6 +181,11 @@ export default async function MainPage({
                     <TD className="tabular text-right text-muted">
                       {row.summary.sickUsed > 0
                         ? daysNum(row.summary.sickUsed)
+                        : "-"}
+                    </TD>
+                    <TD className="tabular text-right text-muted">
+                      {row.summary.publicUsed > 0
+                        ? daysNum(row.summary.publicUsed)
                         : "-"}
                     </TD>
                   </TR>

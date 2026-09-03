@@ -60,6 +60,12 @@ describe("leaveRequestSchema", () => {
     expect(r.success).toBe(true);
   });
 
+  it("공가(PUBLIC) 허용", () => {
+    expect(
+      leaveRequestSchema.safeParse({ ...base, type: "PUBLIC" }).success,
+    ).toBe(true);
+  });
+
   it("잘못된 종류 거부", () => {
     expect(
       leaveRequestSchema.safeParse({ ...base, type: "VACATION" }).success,

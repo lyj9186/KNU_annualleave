@@ -7,6 +7,7 @@ export function revalidateLeaveViews(): void {
   revalidatePath("/main");
   revalidatePath("/leave");
   revalidatePath("/approvals");
+  revalidatePath("/status");
 }
 
 /** 계정/잔여가 바뀌면 영향받는 화면들 */
