@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { buildMonthGrid, coversDay } from "@/lib/calendar/grid";
 import { cn } from "@/lib/cn";
-import { LEAVE_TYPE_SHORT } from "@/lib/leave";
+import { isWeekend, LEAVE_TYPE_SHORT } from "@/lib/leave";
 import type { CalendarLeave } from "@/lib/dashboard/queries";
-import { WEEKDAYS, daysNum, parseDateOnly, todayIso } from "@/lib/datetime";
+import { WEEKDAYS, daysNum, parseDateOnly, todayIso, ymd } from "@/lib/datetime";
 import { krHolidayName } from "@/lib/holidays/kr";
 import { MonthPicker } from "@/components/month-picker";
 
@@ -63,8 +63,11 @@ export function CalendarMonth({
   const cells = weeks.flat();
   const todayStr = todayIso();
 
+  // 주말·공휴일에는 연차가 소진되지 않으므로 달력·목록에 표시하지 않는다.
   const leavesOn = (day: Date) =>
-    leaves.filter((l) => coversDay(day, l.startDate, l.endDate));
+    isWeekend(day) || krHolidayName(ymd(day))
+      ? []
+      : leaves.filter((l) => coversDay(day, l.startDate, l.endDate));
 
   // 기본 선택: 오늘이 이 달에 있으면 오늘, 아니면 연차가 있는 첫날
   const todayInMonth = cells.some((c) => c.inMonth && c.iso === todayStr);
@@ -78,10 +81,14 @@ export function CalendarMonth({
   const selectedInfo = useMemo(() => {
     if (!selected) return null;
     const date = parseDateOnly(selected);
+    const holiday = krHolidayName(selected);
+    const hidden = isWeekend(date) || holiday !== null;
     return {
       label: `${date.getUTCMonth() + 1}월 ${date.getUTCDate()}일 (${WEEKDAYS[date.getUTCDay()]})`,
-      holiday: krHolidayName(selected),
-      items: leaves.filter((l) => coversDay(date, l.startDate, l.endDate)),
+      holiday,
+      items: hidden
+        ? []
+        : leaves.filter((l) => coversDay(date, l.startDate, l.endDate)),
     };
   }, [selected, leaves]);
 

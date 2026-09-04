@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth/dal";
 import {
-  getProxyTargets,
+  getActiveMembers,
   getUserRequests,
   getUserYearSummary,
 } from "@/lib/leave/queries";
@@ -115,7 +115,7 @@ async function MasterProxyView({
   year: number;
 }) {
   const sp = await searchParams;
-  const targets = await getProxyTargets();
+  const targets = await getActiveMembers();
   const target =
     typeof sp.userId === "string"
       ? (targets.find((t) => t.id === sp.userId) ?? null)

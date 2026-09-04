@@ -21,12 +21,12 @@ lib/
   users/     schema · queries · actions
   dashboard/ queries        (메인 캘린더 · 잔여표)
   calendar/  grid(+test)
-  status/    types · expand(+test) · csv(+test) · queries   (월별 연차현황 + CSV)
+  status/    types · expand(+test) · csv(+test) · queries(getLeaveUsage)   (연차현황 + CSV)
   holidays/  kr(+test)   (대한민국 공휴일 정적 표 — 매년 갱신)
 components/
   ui/        디자인 시스템 (배럴 index.ts). 시맨틱 토큰은 globals.css @theme.
              pages/forms 는 raw slate/blue 대신 토큰(text-title/muted, border-line …) 사용.
-  month-picker  연/월 드롭다운 (메인 달력 · 연차현황 공유, ?y=&m= 이동)
+  month-picker  메인 달력 연/월 드롭다운 (?y=&m= 이동)
 ```
 
 - **`@/lib/leave`** = 클라이언트 공용 표면(types+calc)만 re-export. queries/actions/request 는 서버 전용 → 직접 import.
@@ -42,5 +42,7 @@ components/
   - 마스터 = 본인 연차 미사용(캘린더·현황표·연차현황에서 제외). `/leave` 는 마스터일 때 **대리 등록 화면** — 대상자 선택(`?userId=`) 후 `createLeaveRequest` 가 `userId` 를 받아 그 사용자의 연차를 **즉시 APPROVED** 로 생성.
   - 팀장·마스터는 본인 신청도 직접 승인/반려/취소 가능 (`lib/approvals/actions.ts` 에 자가 승인 제한 없음).
   - 연차현황(`/status`)·승인(`/approvals`) = 승인자(팀장·마스터) 전용. 메인 하단 현황표는 일반 사용자에게 본인 행만 (`getYearOverview(year, onlyUserId)`), 달력은 전원 공개.
+- **달력**(`components/calendar-month.tsx`): 주말·공휴일에는 연차 칩·목록을 표시하지 않는다(소진 안 되므로). 공휴일 날짜는 빨간색 + 명칭. `MonthPicker` 는 `/main` 전용.
+- **연차현황**(`/status`): `getLeaveUsage({ year, fromMonth, toMonth, userId?, type? })` — 월 범위 + 이름 + 종류 조회, 기본값은 당월·전체. `StatusFilters` 가 `?y=&from=&to=&user=&type=` 로 이동. CSV 는 `/status/export` 가 같은 파라미터 사용.
 - **비밀번호**: 최소 4자 (`passwordField`, `lib/schema.ts`).
 - 변경 후 검증: `npm run lint` → `npm run typecheck` → `npm test` → `npm run build`.

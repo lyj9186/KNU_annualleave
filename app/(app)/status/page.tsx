@@ -1,7 +1,7 @@
 import { requireApprover } from "@/lib/auth/dal";
-import { getMonthlyLeaveUsage } from "@/lib/status/queries";
-import { clampMonth } from "@/lib/calendar/grid";
-import { MonthPicker } from "@/components/month-picker";
+import { getActiveMembers } from "@/lib/leave/queries";
+import { getLeaveUsage } from "@/lib/status/queries";
+import { StatusFilters } from "./status-filters";
 import {
   Button,
   Card,
@@ -21,6 +21,13 @@ import {
   TypeBadge,
 } from "@/components/ui";
 import { daysNum, ymdKo } from "@/lib/datetime";
+import { LEAVE_TYPES, LEAVE_TYPE_LABELS, type LeaveType } from "@/lib/leave";
+
+/** 1-12 범위로 정규화, 아니면 fallback */
+function month(raw: string | string[] | undefined, fallback: number): number {
+  const n = Number(raw);
+  return Number.isInteger(n) && n >= 1 && n <= 12 ? n : fallback;
+}
 
 export default async function StatusPage({
   searchParams,
@@ -31,22 +38,63 @@ export default async function StatusPage({
   const sp = await searchParams;
   const now = new Date();
 
-  const yParam = Number(sp.y);
-  const mParam = Number(sp.m);
-  const { y, m0 } = clampMonth(
-    Number.isFinite(yParam) && yParam > 0 ? yParam : now.getUTCFullYear(),
-    Number.isFinite(mParam) && mParam > 0 ? mParam : now.getUTCMonth() + 1,
-  );
+  const yRaw = Number(sp.y);
+  const year =
+    Number.isInteger(yRaw) && yRaw >= 2000 && yRaw <= 2100
+      ? yRaw
+      : now.getUTCFullYear();
+  const curMonth = now.getUTCMonth() + 1;
+  const fromMonth = month(sp.from, curMonth);
+  const toMonth = Math.max(fromMonth, month(sp.to, fromMonth));
 
-  const rows = await getMonthlyLeaveUsage(y, m0);
+  const userId = typeof sp.user === "string" ? sp.user : "";
+  const type: LeaveType | "" =
+    typeof sp.type === "string" && (LEAVE_TYPES as string[]).includes(sp.type)
+      ? (sp.type as LeaveType)
+      : "";
+
+  const members = await getActiveMembers();
+  const validUserId = members.some((m) => m.id === userId) ? userId : "";
+
+  const rows = await getLeaveUsage({
+    year,
+    fromMonth,
+    toMonth,
+    userId: validUserId || undefined,
+    type: type || undefined,
+  });
   const total = rows.reduce((sum, r) => sum + r.days, 0);
-  const emptyText = "해당 월에 승인된 연차가 없습니다.";
+
+  const period =
+    fromMonth === toMonth ? `${fromMonth}월` : `${fromMonth}~${toMonth}월`;
+  const memberName = members.find((m) => m.id === validUserId)?.name;
+  const cond = [
+    memberName ?? "전체",
+    type ? LEAVE_TYPE_LABELS[type] : "전체",
+  ].join(" · ");
+  const emptyText = "해당 조건에 승인된 연차가 없습니다.";
+
+  const exportQuery = new URLSearchParams({
+    y: String(year),
+    from: String(fromMonth),
+    to: String(toMonth),
+    user: validUserId,
+    type,
+  }).toString();
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <MonthPicker basePath="/status" year={y} month0={m0} />
-        <a href={`/status/export?y=${y}&m=${m0 + 1}`} download>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <StatusFilters
+          members={members}
+          years={[year - 2, year - 1, year, year + 1, year + 2]}
+          year={year}
+          fromMonth={fromMonth}
+          toMonth={toMonth}
+          userId={validUserId}
+          type={type}
+        />
+        <a href={`/status/export?${exportQuery}`} download>
           <Button variant="outline" size="sm">
             엑셀(CSV) 다운로드
           </Button>
@@ -55,8 +103,8 @@ export default async function StatusPage({
 
       <Card>
         <CardHeader
-          title={`${y}년 ${m0 + 1}월 연차현황`}
-          description={`승인 기준 · ${rows.length}건 · 합계 ${daysNum(total)}일 (마스터 제외)`}
+          title={`${year}년 ${period} 연차현황`}
+          description={`승인 기준 · ${cond} · ${rows.length}건 · 합계 ${daysNum(total)}일 (마스터·주말·공휴일 제외)`}
         />
         <CardBody className="p-0">
           {rows.length === 0 ? (

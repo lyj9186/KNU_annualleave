@@ -627,10 +627,10 @@
             <div class="path"><span class="seg">메인</span></div>
             <ul class="plain">
               <li>월별 캘린더에는 <b>전 직원</b>의 연차가 함께 표시됩니다.</li>
-              <li>연 · 월 드롭다운, <span class="tok">‹</span> <span class="tok">›</span>, <span class="tok">이번 달</span> 버튼으로 달을 옮깁니다.</li>
+              <li>연 · 월 드롭다운과 <span class="tok">‹</span> <span class="tok">›</span> 로 달을 옮깁니다.</li>
               <li>모바일에서는 점이 찍힌 미니 달력에서 날짜를 누르면 그 날의 목록이 열립니다.</li>
               <li>캘린더 아래 <b>내 연차 현황</b>에는 본인의 가용 · 사용 · 잔여만 나옵니다.</li>
-              <li><b>대한민국 공휴일</b>은 날짜가 빨간색으로 표시됩니다.</li>
+              <li><b>대한민국 공휴일</b>은 날짜가 빨간색 + 명칭으로 표시됩니다. 연차 기간이 주말 · 공휴일에 걸치면 그 날에는 연차가 <b>표시되지 않습니다</b> (연차가 소진되지 않으므로).</li>
             </ul>
             <div class="cal-key">
               <span><i style="background:var(--lt-annual)"></i>승인된 연차</span>
@@ -701,12 +701,12 @@
           </article>
 
           <article class="task">
-            <h3>월별 연차현황 &amp; 엑셀 다운로드</h3>
+            <h3>연차현황 조회 &amp; 엑셀 다운로드</h3>
             <div class="path"><span class="seg">연차현황</span></div>
             <ol class="steps">
-              <li>연 · 월 드롭다운으로 조회할 달을 고릅니다.</li>
-              <li>그 달에 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 · 공가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>). 주말과 공휴일은 빠집니다.</li>
-              <li><span class="tok">엑셀(CSV) 다운로드</span>를 누르면 <span class="tok">연차현황_2026-09.csv</span> 파일이 저장됩니다. 엑셀에서 바로 열리고 한글도 깨지지 않습니다.</li>
+              <li>조회 조건을 고릅니다 — <b>기간</b>(연도 · 시작월 <span class="tok">~</span> 종료월, 기본값은 당월), <b>이름</b>(기본 전체), <b>종류</b>(기본 전체).</li>
+              <li>조건 범위에서 <b>승인된</b> 연차가 하루 단위로 표시됩니다 — 이름 · 일자 · 종류 · 사용일수 (연차 · 병가 · 공가 <span class="tok">1</span>, 반차 <span class="tok">0.5</span>). 주말과 공휴일은 빠집니다.</li>
+              <li><span class="tok">엑셀(CSV) 다운로드</span>는 <b>현재 조회 조건 그대로</b> 받습니다. <span class="tok">연차현황_2026-09.csv</span>(단월) / <span class="tok">연차현황_2026-09~12.csv</span>(범위). 엑셀에서 바로 열리고 한글도 안 깨집니다.</li>
             </ol>
             <div class="note">예시 한 줄 — <span class="tok">김팀장 · 2026-09-15 · 오전반차 · 0.5</span>. 마스터는 이 목록에 나타나지 않습니다.</div>
           </article>

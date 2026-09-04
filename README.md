@@ -26,14 +26,14 @@
 | 연차 등록 (본인 신청) / 철회 | O | O | - |
 | 연차 대리 등록 (다른 사용자, 즉시 승인) | - | - | O |
 | 승인 / 반려 / 취소 (본인 신청 포함) | - | O | O |
-| 연차현황 (월별 조회 · CSV 다운로드) | - | O | O |
+| 연차현황 (월범위·이름·종류 조회 · CSV) | - | O | O |
 | 연차설정 (계정 · 비밀번호 · 잔여) | - | - | O |
 
 - **마스터**는 본인 연차를 사용하지 않는 결재·계정관리 전용 계정입니다 (캘린더·현황표·연차현황에서 제외). 단 `연차 등록` 화면에서 다른 사용자의 연차를 **대리 등록**할 수 있으며, 대리 등록 건은 즉시 승인 처리됩니다.
 - **회원가입**은 `승인대기(PENDING)` 상태로 생성되며, 마스터가 활성화해야 로그인할 수 있습니다.
 - **연차 종류**: 연차(−1일) · 오전 반차(−0.5일) · 오후 반차(−0.5일) · 병가 · 공가(연차 미차감, 사용일수만 기록).
 - 잔여연차 = 가용연차 − (승인된 연차·반차 합계 + 마스터 수동 조정). 병가·공가는 차감하지 않습니다.
-- 연차 일수는 근무일(월~금)에서 **대한민국 공휴일을 제외**해 계산합니다. 공휴일은 메인 달력에 빨간색으로 표시되며, 데이터는 `lib/holidays/kr.ts` 에서 관리합니다 (음력·대체공휴일 때문에 매년 갱신).
+- 연차 일수는 근무일(월~금)에서 **대한민국 공휴일을 제외**해 계산합니다. 공휴일은 메인 달력에 빨간색으로 표시되며, 데이터는 `lib/holidays/kr.ts` 에서 관리합니다 (음력·대체공휴일 때문에 매년 갱신). 주말·공휴일에는 연차 칩이 달력·목록에 표시되지 않습니다.
 - **승인**: 연차 반영 / **반려**·**취소**: 반영 안 됨.
 
 ---
@@ -166,10 +166,10 @@ DATABASE_URL="<main Pooled>" DIRECT_URL="<main Direct>" npm run db:seed     # �
 app/
   (auth)/            로그인 · 회원가입 (페이지 + 클라이언트 폼)
   (app)/             인증 필요 영역 (공통 레이아웃 = 상단 네비)
-    main/            메인 — 월별 캘린더(연/월 드롭다운) + 연차 현황표
+    main/            메인 — 월별 캘린더(연/월 드롭다운, 공휴일) + 연차 현황표
     leave/           연차 등록 + 내 신청 내역 (마스터는 대리 등록 화면)
     approvals/       승인/반려/취소 (상태·종류 필터)
-    status/          연차현황 — 월별 조회 + CSV 다운로드(export/route.ts). 팀장·마스터 전용
+    status/          연차현황 — 월범위·이름·종류 조회(status-filters) + CSV(export/route.ts). 팀장·마스터 전용
     settings/[userId]/  연차설정 — 계정 목록 · 생성 · 상세
 lib/
   db · cn · form · schema · datetime · balance · revalidate   (공유)
@@ -179,7 +179,7 @@ lib/
   users/      schema · queries · actions
   dashboard/  queries      (메인 캘린더 · 잔여표)
   calendar/   grid          (달력 그리드 계산)
-  status/     types · expand · csv · queries   (월별 연차현황 + CSV)
+  status/     types · expand · csv · queries(getLeaveUsage)   (연차현황 + CSV)
   holidays/   kr            (대한민국 공휴일 표 — 매년 갱신)
 components/
   ui/         디자인 시스템 (index.ts 배럴) — Button/Field/Card/Table/Badge/Stat/ChipLink …

@@ -26,9 +26,6 @@ export function MonthPicker({
   const next = month0 === 11 ? { y: year + 1, m: 1 } : { y: year, m: month0 + 2 };
   const years = [year - 2, year - 1, year, year + 1, year + 2];
 
-  const now = new Date();
-  const isCurrent = year === now.getFullYear() && month0 === now.getMonth();
-
   const btn =
     "flex h-9 items-center justify-center rounded-md border border-line-strong bg-surface text-subtle hover:bg-surface-muted";
 
@@ -74,15 +71,6 @@ export function MonthPicker({
       >
         ›
       </button>
-      {!isCurrent ? (
-        <button
-          type="button"
-          onClick={() => router.push(basePath)}
-          className={cn(btn, "px-2 text-xs")}
-        >
-          이번 달
-        </button>
-      ) : null}
     </div>
   );
 }

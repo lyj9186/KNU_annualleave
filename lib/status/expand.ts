@@ -15,19 +15,19 @@ export interface LeaveUsageInput {
 }
 
 /**
- * 승인된 연차 신청들을 특정 월의 하루 단위 행으로 펼친다.
- * - 반차: 해당일이 그 달 안이면 1행(0.5). 주말·공휴일이어도 등록됐다면 표기.
- * - 그 외(연차·병가·공가): 월 경계로 자른 뒤 근무일마다 1행(1). `isHoliday` 주면 공휴일 제외.
+ * 승인된 연차 신청들을 [rangeStart, rangeEnd] (양 끝 포함) 안의 하루 단위 행으로 펼친다.
+ * - 반차: 해당일이 범위 안이면 1행(0.5). 주말·공휴일이어도 등록됐다면 표기.
+ * - 그 외(연차·병가·공가): 범위로 자른 뒤 근무일마다 1행(1). `isHoliday` 주면 공휴일 제외.
  * 정렬: 일자 → 역할(마스터·팀장·사용자) → 이름(ko).
  */
 export function expandLeaveUsage(
   reqs: LeaveUsageInput[],
-  year: number,
-  month0: number,
+  rangeStart: Date,
+  rangeEnd: Date,
   isHoliday?: HolidayCheck,
 ): LeaveUsageRow[] {
-  const monthStart = new Date(Date.UTC(year, month0, 1));
-  const monthEnd = new Date(Date.UTC(year, month0 + 1, 0)); // 말일
+  const start = toUtcMidnight(rangeStart);
+  const end = toUtcMidnight(rangeEnd);
   const out: LeaveUsageRow[] = [];
 
   for (const r of reqs) {
@@ -35,14 +35,14 @@ export function expandLeaveUsage(
 
     if (isHalfDay(r.type)) {
       const day = toUtcMidnight(r.startDate);
-      if (day >= monthStart && day <= monthEnd) {
+      if (day >= start && day <= end) {
         out.push({ ...base, date: day, days: 0.5 });
       }
       continue;
     }
 
-    const from = r.startDate < monthStart ? monthStart : r.startDate;
-    const to = r.endDate > monthEnd ? monthEnd : r.endDate;
+    const from = r.startDate < start ? start : r.startDate;
+    const to = r.endDate > end ? end : r.endDate;
     for (const day of eachBusinessDay(from, to, isHoliday)) {
       out.push({ ...base, date: day, days: 1 });
     }

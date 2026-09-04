@@ -10,14 +10,17 @@ import {
 import { ROLE_ORDER, type Role } from "@/lib/leave/types";
 import { requestSelect, toRequestRow, type RequestRow } from "@/lib/leave/request";
 
-export interface ProxyTarget {
+export interface Member {
   id: string;
   name: string;
   role: Role;
 }
 
-/** 마스터 대리 등록 대상 후보 (활성 · 마스터 제외, 팀장 → 사용자 순) */
-export async function getProxyTargets(): Promise<ProxyTarget[]> {
+/**
+ * 활성 구성원 (마스터 제외, 팀장 → 사용자 순).
+ * 마스터 대리 등록 대상 · 연차현황 이름 필터에서 공유.
+ */
+export async function getActiveMembers(): Promise<Member[]> {
   const users = await db.user.findMany({
     where: { status: "ACTIVE", role: { not: "MASTER" } },
     select: { id: true, name: true, role: true },
